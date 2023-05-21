@@ -13,20 +13,19 @@ from torchvision.utils import make_grid
 import gc
 import numpy as np
 import cv2
-from models.bert import BertConfig, Graphormer
-from models.bert import Graphormer_Hand_Network as Graphormer_Network
-from modelsg._mano import MANO, Mesh
-from src.modeling.hrnet.hrnet_cls_net_gridfeat import get_cls_net_gridfeat
-from src.modeling.hrnet.config import config as hrnet_config
-from src.modeling.hrnet.config import update_config as hrnet_update_config
+from models import BertConfig, Graphormer
+from models import Graphormer_Hand_Network as Graphormer_Network
+from models.mano import MANO, Mesh
+from models.hrnet.hrnet_cls_net_gridfeat import get_cls_net_gridfeat
+from models.hrnet.config import config as hrnet_config
+from models.hrnet.config import update_config as hrnet_update_config
 import utils.config as cfg
-from src.datasets.build import make_hand_data_loader
+from utils.build import make_hand_data_loader
 
 from utils.logger import setup_logger
 from utils.comm import synchronize, is_main_process, get_rank, get_world_size, all_gather
 from utils.miscellaneous import mkdir, set_seed
 from utils.metric_logger import AverageMeter
-from src.utils.renderer import Renderer, visualize_reconstruction, visualize_reconstruction_test, visualize_reconstruction_no_text
 from utils.geometric_layers import orthographic_projection
 
 # from azureml.core.run import Run
@@ -272,74 +271,16 @@ def run_eval_and_save(args, split, val_dataloader, Graphormer_model, mano_model,
         )
     Graphormer_model.eval()
 
-    if args.aml_eval==True:
-        run_aml_inference_hand_mesh(args, val_dataloader, 
+    run_inference_hand_mesh(args, val_dataloader, 
                                 Graphormer_model, 
                                 criterion_keypoints, 
                                 criterion_vertices, 
                                 0, 
-                                mano_model, mesh_sampler,
-                                renderer, split)
-    else:
-        run_inference_hand_mesh(args, val_dataloader, 
-                                Graphormer_model, 
-                                criterion_keypoints, 
-                                criterion_vertices, 
-                                0, 
-                                mano_model, mesh_sampler,
-                                renderer, split)
+                                mano_model, mesh_sampler)
     checkpoint_dir = save_checkpoint(Graphormer_model, args, 0, 0)
     return
 
-def run_aml_inference_hand_mesh(args, val_loader, Graphormer_model, criterion, criterion_vertices, epoch, mano_model, mesh_sampler, renderer, split):
-    # switch to evaluate mode
-    Graphormer_model.eval()
-    fname_output_save = []
-    mesh_output_save = []
-    joint_output_save = []
-    world_size = get_world_size()
-    with torch.no_grad():
-        for i, (img_keys, images, annotations) in enumerate(val_loader):
-            batch_size = images.size(0)
-            # compute output
-            images = images#.cuda()
-            
-            # forward-pass
-            pred_camera, pred_3d_joints, pred_vertices_sub, pred_vertices = Graphormer_model(images, mano_model, mesh_sampler)
-            # obtain 3d joints from full mesh
-            pred_3d_joints_from_mesh = mano_model.get_3d_joints(pred_vertices)
-
-            for j in range(batch_size):
-                fname_output_save.append(img_keys[j])
-                pred_vertices_list = pred_vertices[j].tolist()
-                mesh_output_save.append(pred_vertices_list)
-                pred_3d_joints_from_mesh_list = pred_3d_joints_from_mesh[j].tolist()
-                joint_output_save.append(pred_3d_joints_from_mesh_list)
-
-    if world_size > 1:
-        torch.distributed.barrier()
-    print('save results to pred.json')
-    output_json_file = 'pred.json'
-    print('save results to ', output_json_file)
-    with open(output_json_file, 'w') as f:
-        json.dump([joint_output_save, mesh_output_save], f)
-
-    azure_ckpt_name = '200' # args.resume_checkpoint.split('/')[-2].split('-')[1]
-    inference_setting = 'sc%02d_rot%s'%(int(args.sc*10),str(int(args.rot)))
-    output_zip_file = args.output_dir + 'ckpt' + azure_ckpt_name + '-' + inference_setting +'-pred.zip'
-
-    resolved_submit_cmd = 'zip ' + output_zip_file + ' ' + output_json_file
-    print(resolved_submit_cmd)
-    os.system(resolved_submit_cmd)
-    resolved_submit_cmd = 'rm %s'%(output_json_file)
-    print(resolved_submit_cmd)
-    os.system(resolved_submit_cmd)
-    if world_size > 1:
-        torch.distributed.barrier()
-
-    return 
-
-def run_inference_hand_mesh(args, val_loader, Graphormer_model, criterion, criterion_vertices, epoch, mano_model, mesh_sampler, renderer, split):
+def run_inference_hand_mesh(args, val_loader, Graphormer_model, criterion, criterion_vertices, epoch, mano_model, mesh_sampler):
     # switch to evaluate mode
     Graphormer_model.eval()
     fname_output_save = []
@@ -369,26 +310,6 @@ def run_inference_hand_mesh(args, val_loader, Graphormer_model, criterion, crite
                 pred_3d_joints_from_mesh_list = pred_3d_joints_from_mesh[j].tolist()
                 joint_output_save.append(pred_3d_joints_from_mesh_list)
 
-            # if i%200000 ==0:
-            #     # obtain 3d joints, which are regressed from the full mesh
-            #     pred_3d_joints_from_mesh = mano_model.get_3d_joints(pred_vertices)
-            #     # obtain 2d joints, which are projected from 3d joints of mesh
-            #     pred_2d_joints_from_mesh = orthographic_projection(pred_3d_joints_from_mesh.contiguous(), pred_camera.contiguous())
-            #     visual_imgs = visualize_mesh(   renderer,
-            #                                     annotations['ori_img'].detach(),
-            #                                     annotations['joints_2d'].detach(),
-            #                                     pred_vertices.detach(), 
-            #                                     pred_camera.detach(),
-            #                                     pred_2d_joints_from_mesh.detach())
-
-            #     visual_imgs = visual_imgs.transpose(0,1)
-            #     visual_imgs = visual_imgs.transpose(1,2)
-            #     visual_imgs = np.asarray(visual_imgs)
-                
-            #     inference_setting = 'sc%02d_rot%s'%(int(args.sc*10),str(int(args.rot)))
-            #     temp_fname = args.output_dir + args.resume_checkpoint[0:-9] + 'freihand_results_'+inference_setting+'_batch'+str(i)+'.jpg'
-            #     cv2.imwrite(temp_fname, np.asarray(visual_imgs[:,:,::-1]*255))
-
     print('save results to pred.json')
     with open('pred.json', 'w') as f:
         json.dump([joint_output_save, mesh_output_save], f)
@@ -404,82 +325,6 @@ def run_inference_hand_mesh(args, val_loader, Graphormer_model, criterion, crite
     os.system(resolved_submit_cmd)
     return 
 
-def visualize_mesh( renderer,
-                    images,
-                    gt_keypoints_2d,
-                    pred_vertices, 
-                    pred_camera,
-                    pred_keypoints_2d):
-    """Tensorboard logging."""
-    gt_keypoints_2d = gt_keypoints_2d.cpu().numpy()
-    to_lsp = list(range(21))
-    rend_imgs = []
-    batch_size = pred_vertices.shape[0]
-    # Do visualization for the first 6 images of the batch
-    for i in range(min(batch_size, 10)):
-        img = images[i].cpu().numpy().transpose(1,2,0)
-        # Get LSP keypoints from the full list of keypoints
-        gt_keypoints_2d_ = gt_keypoints_2d[i, to_lsp]
-        pred_keypoints_2d_ = pred_keypoints_2d.cpu().numpy()[i, to_lsp]
-        # Get predict vertices for the particular example
-        vertices = pred_vertices[i].cpu().numpy()
-        cam = pred_camera[i].cpu().numpy()
-        # Visualize reconstruction and detected pose
-        rend_img = visualize_reconstruction(img, 224, gt_keypoints_2d_, vertices, pred_keypoints_2d_, cam, renderer)
-        rend_img = rend_img.transpose(2,0,1)
-        rend_imgs.append(torch.from_numpy(rend_img))   
-    rend_imgs = make_grid(rend_imgs, nrow=1)
-    return rend_imgs
-
-def visualize_mesh_test( renderer,
-                    images,
-                    gt_keypoints_2d,
-                    pred_vertices, 
-                    pred_camera,
-                    pred_keypoints_2d,
-                    PAmPJPE):
-    """Tensorboard logging."""
-    gt_keypoints_2d = gt_keypoints_2d.cpu().numpy()
-    to_lsp = list(range(21))
-    rend_imgs = []
-    batch_size = pred_vertices.shape[0]
-    # Do visualization for the first 6 images of the batch
-    for i in range(min(batch_size, 10)):
-        img = images[i].cpu().numpy().transpose(1,2,0)
-        # Get LSP keypoints from the full list of keypoints
-        gt_keypoints_2d_ = gt_keypoints_2d[i, to_lsp]
-        pred_keypoints_2d_ = pred_keypoints_2d.cpu().numpy()[i, to_lsp]
-        # Get predict vertices for the particular example
-        vertices = pred_vertices[i].cpu().numpy()
-        cam = pred_camera[i].cpu().numpy()
-        score = PAmPJPE[i]
-        # Visualize reconstruction and detected pose
-        rend_img = visualize_reconstruction_test(img, 224, gt_keypoints_2d_, vertices, pred_keypoints_2d_, cam, renderer, score)
-        rend_img = rend_img.transpose(2,0,1)
-        rend_imgs.append(torch.from_numpy(rend_img))   
-    rend_imgs = make_grid(rend_imgs, nrow=1)
-    return rend_imgs
-
-def visualize_mesh_no_text( renderer,
-                    images,
-                    pred_vertices, 
-                    pred_camera):
-    """Tensorboard logging."""
-    rend_imgs = []
-    batch_size = pred_vertices.shape[0]
-    # Do visualization for the first 6 images of the batch
-    for i in range(min(batch_size, 1)):
-        img = images[i].cpu().numpy().transpose(1,2,0)
-        # Get predict vertices for the particular example
-        vertices = pred_vertices[i].cpu().numpy()
-        cam = pred_camera[i].cpu().numpy()
-        # Visualize reconstruction only
-        rend_img = visualize_reconstruction_no_text(img, 224, vertices, cam, renderer, color='hand')
-        rend_img = rend_img.transpose(2,0,1)
-        rend_imgs.append(torch.from_numpy(rend_img))   
-    rend_imgs = make_grid(rend_imgs, nrow=1)
-    return rend_imgs
-
 def parse_args():
     parser = argparse.ArgumentParser()
     #########################################################
@@ -489,16 +334,16 @@ def parse_args():
                         help="Directory with all datasets, each in one subfolder")
     parser.add_argument("--train_yaml", default='imagenet2012/train.yaml', type=str, required=False,
                         help="Yaml file with all data for training.")
-    parser.add_argument("--val_yaml", default='imagenet2012/test.yaml', type=str, required=False,
+    parser.add_argument("--val_yaml", default='freihand_v3/test.yaml', type=str, required=False,
                         help="Yaml file with all data for validation.")
-    parser.add_argument("--num_workers", default=1, type=int, 
+    parser.add_argument("--num_workers", default=0, type=int, 
                         help="Workers in dataloader.")       
     parser.add_argument("--img_scale_factor", default=1, type=int, 
                         help="adjust image resolution.")  
     #########################################################
     # Loading/saving checkpoints
     #########################################################
-    parser.add_argument("--model_name_or_path", default='src/modeling/bert/bert-base-uncased/', type=str, required=False,
+    parser.add_argument("--model_name_or_path", default='src/models/bert-base-uncased/', type=str, required=False,
                         help="Path to pre-trained transformer model or model type.")
     parser.add_argument("--resume_checkpoint", default=None, type=str, required=False,
                         help="Path to specific checkpoint for resume training.")
@@ -513,7 +358,7 @@ def parse_args():
     #########################################################
     parser.add_argument("--per_gpu_train_batch_size", default=64, type=int, 
                         help="Batch size per GPU/CPU for training.")
-    parser.add_argument("--per_gpu_eval_batch_size", default=64, type=int, 
+    parser.add_argument("--per_gpu_eval_batch_size", default=32, type=int, 
                         help="Batch size per GPU/CPU for evaluation.")
     parser.add_argument('--lr', "--learning_rate", default=1e-4, type=float, 
                         help="The initial lr.")
@@ -528,11 +373,11 @@ def parse_args():
     #########################################################
     # Model architectures
     #########################################################
-    parser.add_argument("--num_hidden_layers", default=-1, type=int, required=False, 
+    parser.add_argument("--num_hidden_layers", default=4, type=int, required=False, 
                         help="Update model config if given")
     parser.add_argument("--hidden_size", default=-1, type=int, required=False, 
                         help="Update model config if given")
-    parser.add_argument("--num_attention_heads", default=-1, type=int, required=False, 
+    parser.add_argument("--num_attention_heads", default=4, type=int, required=False, 
                         help="Update model config if given. Note that the division of "
                         "hidden_size / num_attention_heads should be in integer.")
     parser.add_argument("--intermediate_size", default=-1, type=int, required=False, 
@@ -548,7 +393,7 @@ def parse_args():
     #########################################################
     # Others
     #########################################################
-    parser.add_argument("--run_eval_only", default=False, action='store_true',) 
+    parser.add_argument("--run_eval_only", default=True, action='store_true',) 
     parser.add_argument("--multiscale_inference", default=False, action='store_true',) 
     # if enable "multiscale_inference", dataloader will apply transformations to the test image based on
     # the rotation "rot" and scale "sc" parameters below 
@@ -595,7 +440,7 @@ def main(args):
     mesh_sampler = Mesh()
 
     # Renderer for visualization
-    renderer = Renderer(faces=mano_model.face)
+    renderer = None
 
     # Load pretrained model
     trans_encoder = []
@@ -649,24 +494,11 @@ def main(args):
             logger.info("Init model from scratch.")
             trans_encoder.append(model)
         
-        # create backbone model
-        if args.arch=='hrnet':
-            hrnet_yaml = 'models/hrnet/cls_hrnet_w40_sgd_lr5e-2_wd1e-4_bs32_x100.yaml'
-            hrnet_checkpoint = 'models/hrnet/hrnetv2_w40_imagenet_pretrained.pth'
-            hrnet_update_config(hrnet_config, hrnet_yaml)
-            backbone = get_cls_net_gridfeat(hrnet_config, pretrained=hrnet_checkpoint)
-            logger.info('=> loading hrnet-v2-w40 model')
-        elif args.arch=='hrnet-w64':
-            hrnet_yaml = 'models/hrnet/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100.yaml'
-            hrnet_checkpoint = 'models/hrnet/hrnetv2_w64_imagenet_pretrained.pth'
-            hrnet_update_config(hrnet_config, hrnet_yaml)
-            backbone = get_cls_net_gridfeat(hrnet_config, pretrained=hrnet_checkpoint)
-            logger.info('=> loading hrnet-v2-w64 model')
-        else:
-            print("=> using pre-trained model '{}'".format(args.arch))
-            backbone = models.__dict__[args.arch](pretrained=True)
-            # remove the last fc layer
-            backbone = torch.nn.Sequential(*list(backbone.children())[:-1])
+        hrnet_yaml = 'models/hrnet/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100.yaml'
+        hrnet_checkpoint = 'models/hrnet/hrnetv2_w64_imagenet_pretrained.pth'
+        hrnet_update_config(hrnet_config, hrnet_yaml)
+        backbone = get_cls_net_gridfeat(hrnet_config, pretrained=hrnet_checkpoint)
+        logger.info('=> loading hrnet-v2-w64 model')
 
         trans_encoder = torch.nn.Sequential(*trans_encoder)
         total_params = sum(p.numel() for p in trans_encoder.parameters())
