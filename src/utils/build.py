@@ -8,8 +8,8 @@ Licensed under the MIT license.
 import os.path as op
 import torch
 import logging
-from utils.comm import get_world_size
-from utils.hand_mesh_tsv import  (HandMeshTSVYamlDataset)
+from src.utils.comm import get_world_size
+from src.utils.hand_mesh_tsv import  (HandMeshTSVYamlDataset)
 
 
 class IterationBasedBatchSampler(torch.utils.data.sampler.BatchSampler):

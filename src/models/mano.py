@@ -16,13 +16,13 @@ import json
 import code
 from manopth.manolayer import ManoLayer
 import scipy.sparse
-import utils.config as cfg
+import src.utils.config as cfg
 
 class MANO(nn.Module):
     def __init__(self):
         super(MANO, self).__init__()
 
-        self.mano_dir = 'src/data'
+        self.mano_dir = 'src\\data'
         self.layer = self.get_layer()
         self.vertex_num = 778
         self.face = self.layer.th_faces.numpy()
