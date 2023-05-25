@@ -1,0 +1,794 @@
+/usr/bin/python3.10 /home/atharva/PycharmProjects/2dTo3dHandPose/train.py
+set os.environ[OMP_NUM_THREADS] to 0
+2023-05-24 02:01:56,382 Graphormer INFO: Using 1 GPUs
+/home/atharva/.local/lib/python3.10/site-packages/manopth/manolayer.py:72: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  torch.Tensor(smpl_data['betas'].r).unsqueeze(0))
+/home/atharva/.local/lib/python3.10/site-packages/scipy/sparse/_index.py:103: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_intXint(row, col, x.flat[0])
+2023-05-24 02:01:56,651 Graphormer INFO: Update config parameter num_hidden_layers: 8 -> 4
+2023-05-24 02:01:56,651 Graphormer INFO: Update config parameter hidden_size: 768 -> 1024
+2023-05-24 02:01:56,651 Graphormer INFO: Update config parameter num_attention_heads: 8 -> 4
+2023-05-24 02:01:56,651 Graphormer INFO: Update config parameter intermediate_size: 3072 -> 2048
+2023-05-24 02:01:57,853 Graphormer INFO: Init model from scratch.
+2023-05-24 02:01:57,853 Graphormer INFO: Update config parameter num_hidden_layers: 8 -> 4
+2023-05-24 02:01:57,853 Graphormer INFO: Update config parameter hidden_size: 768 -> 256
+2023-05-24 02:01:57,853 Graphormer INFO: Update config parameter num_attention_heads: 8 -> 4
+2023-05-24 02:01:57,853 Graphormer INFO: Update config parameter intermediate_size: 3072 -> 512
+2023-05-24 02:01:58,040 Graphormer INFO: Init model from scratch.
+2023-05-24 02:01:58,040 Graphormer INFO: Add Graph Conv
+2023-05-24 02:01:58,040 Graphormer INFO: Update config parameter num_hidden_layers: 8 -> 4
+2023-05-24 02:01:58,040 Graphormer INFO: Update config parameter hidden_size: 768 -> 64
+2023-05-24 02:01:58,040 Graphormer INFO: Update config parameter num_attention_heads: 8 -> 4
+2023-05-24 02:01:58,040 Graphormer INFO: Update config parameter intermediate_size: 3072 -> 128
+2023-05-24 02:01:58,086 Graphormer INFO: Init model from scratch.
+=> loading pretrained model models/hrnet/hrnetv2_w64_imagenet_pretrained.pth
+2023-05-24 02:02:00,134 Graphormer INFO: => loading hrnet-v2-w64 model
+2023-05-24 02:02:00,135 Graphormer INFO: Graphormer encoders total parameters: 83318598
+2023-05-24 02:02:00,137 Graphormer INFO: Backbone total parameters: 128059944
+2023-05-24 02:02:00,159 Graphormer INFO: Training parameters Namespace(data_dir='datasets', train_yaml='./datasets/freihand/train.yaml', val_yaml='./datasets/freihand/test.yaml', num_workers=0, img_scale_factor=1, model_name_or_path='src2/models/bert-base-uncased/', resume_checkpoint=None, output_dir='output/', config_name='', arch='hrnet-w64', per_gpu_train_batch_size=4, per_gpu_eval_batch_size=4, lr=0.0001, num_train_epochs=200, vertices_loss_weight=1.0, joints_loss_weight=1.0, vloss_w_full=0.5, vloss_w_sub=0.5, drop_out=0.1, num_hidden_layers=4, hidden_size=64, num_attention_heads=4, intermediate_size=128, input_feat_dim='2051,512,128', hidden_feat_dim='1024,256,64', which_gcn='0,0,1', mesh_type='hand', run_eval_only=False, multiscale_inference=False, rot=0, sc=1.0, aml_eval=False, logging_steps=100, device=device(type='cpu'), seed=88, local_rank=0, num_gpus=1, distributed=False)
+./datasets/freihand/train.yaml
+2023-05-24 02:14:07,650 Graphormer INFO: eta: 547 days, 12:29:17 epoch: 0 iter: 100 max mem : 0  loss: 0.2396, 2d joint loss: 0.1409, 3d joint loss: 0.0137, vertex loss: 0.0850, compute: 7.2645, data: 0.0325, lr: 0.000100
+Losses
+0.23962705999612807
+0.01368405439890921
+0.1409156172722578
+0.08502738945186138
+INFO:Graphormer:eta: 547 days, 12:29:17 epoch: 0 iter: 100 max mem : 0  loss: 0.2396, 2d joint loss: 0.1409, 3d joint loss: 0.0137, vertex loss: 0.0850, compute: 7.2645, data: 0.0325, lr: 0.000100
+2023-05-24 02:14:16,077 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 02:27:35,654 Graphormer INFO: eta: 578 days, 5:43:43 epoch: 0 iter: 200 max mem : 0  loss: 0.2235, 2d joint loss: 0.1387, 3d joint loss: 0.0116, vertex loss: 0.0732, compute: 7.6722, data: 0.0825, lr: 0.000100
+INFO:Graphormer:eta: 578 days, 5:43:43 epoch: 0 iter: 200 max mem : 0  loss: 0.2235, 2d joint loss: 0.1387, 3d joint loss: 0.0116, vertex loss: 0.0732, compute: 7.6722, data: 0.0825, lr: 0.000100
+Losses
+0.2235258374363184
+0.011607153301592916
+0.1387284693866968
+0.07319021539762616
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 02:27:52,595 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 02:40:21,970 Graphormer INFO: eta: 578 days, 0:08:11 epoch: 0 iter: 300 max mem : 0  loss: 0.2202, 2d joint loss: 0.1407, 3d joint loss: 0.0106, vertex loss: 0.0690, compute: 7.6692, data: 0.1239, lr: 0.000100
+Losses
+0.2202364147702853
+0.010551442333186667
+0.1407128376265367
+0.06897213529795408
+INFO:Graphormer:eta: 578 days, 0:08:11 epoch: 0 iter: 300 max mem : 0  loss: 0.2202, 2d joint loss: 0.1407, 3d joint loss: 0.0106, vertex loss: 0.0690, compute: 7.6692, data: 0.1239, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 02:40:31,695 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 02:54:03,660 Graphormer INFO: eta: 588 days, 7:32:30 epoch: 0 iter: 400 max mem : 0  loss: 0.2160, 2d joint loss: 0.1411, 3d joint loss: 0.0099, vertex loss: 0.0651, compute: 7.8061, data: 0.1292, lr: 0.000100
+Losses
+0.21602680929005147
+0.009903722770977764
+0.14105785723775624
+0.06506522953510284
+INFO:Graphormer:eta: 588 days, 7:32:30 epoch: 0 iter: 400 max mem : 0  loss: 0.2160, 2d joint loss: 0.1411, 3d joint loss: 0.0099, vertex loss: 0.0651, compute: 7.8061, data: 0.1292, lr: 0.000100
+2023-05-24 02:54:19,159 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 03:07:24,037 Graphormer INFO: eta: 591 days, 6:49:11 epoch: 0 iter: 500 max mem : 0  loss: 0.2131, 2d joint loss: 0.1411, 3d joint loss: 0.0096, vertex loss: 0.0625, compute: 7.8457, data: 0.1428, lr: 0.000100
+Losses
+0.21309007868170737
+0.009555938398465514
+0.14105035696923732
+0.06248378357291222
+INFO:Graphormer:eta: 591 days, 6:49:11 epoch: 0 iter: 500 max mem : 0  loss: 0.2131, 2d joint loss: 0.1411, 3d joint loss: 0.0096, vertex loss: 0.0625, compute: 7.8457, data: 0.1428, lr: 0.000100
+2023-05-24 03:07:29,202 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 03:20:09,188 Graphormer INFO: eta: 588 days, 20:05:50 epoch: 0 iter: 600 max mem : 0  loss: 0.2096, 2d joint loss: 0.1404, 3d joint loss: 0.0093, vertex loss: 0.0599, compute: 7.8133, data: 0.1345, lr: 0.000100
+Losses
+0.20961294710636139
+0.00925921084669729
+0.14044672273099423
+0.05990701374908288
+INFO:Graphormer:eta: 588 days, 20:05:50 epoch: 0 iter: 600 max mem : 0  loss: 0.2096, 2d joint loss: 0.1404, 3d joint loss: 0.0093, vertex loss: 0.0599, compute: 7.8133, data: 0.1345, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 03:20:14,261 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 586 days, 17:57:52 epoch: 0 iter: 700 max mem : 0  loss: 0.2061, 2d joint loss: 0.1389, 3d joint loss: 0.0091, vertex loss: 0.0581, compute: 7.7857, data: 0.1279, lr: 0.000100
+2023-05-24 03:32:51,200 Graphormer INFO: eta: 586 days, 17:57:52 epoch: 0 iter: 700 max mem : 0  loss: 0.2061, 2d joint loss: 0.1389, 3d joint loss: 0.0091, vertex loss: 0.0581, compute: 7.7857, data: 0.1279, lr: 0.000100
+Losses
+0.20613933071494103
+0.009074855160766414
+0.13893456748553684
+0.058129908309451174
+2023-05-24 03:32:56,318 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 03:46:20,713 Graphormer INFO: eta: 589 days, 15:42:09 epoch: 0 iter: 800 max mem : 0  loss: 0.2020, 2d joint loss: 0.1368, 3d joint loss: 0.0089, vertex loss: 0.0564, compute: 7.8244, data: 0.1232, lr: 0.000100
+Losses
+0.20202563112601638
+0.008908157696714625
+0.1367509085079655
+0.05636656506918371
+INFO:Graphormer:eta: 589 days, 15:42:09 epoch: 0 iter: 800 max mem : 0  loss: 0.2020, 2d joint loss: 0.1368, 3d joint loss: 0.0089, vertex loss: 0.0564, compute: 7.8244, data: 0.1232, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 03:46:25,793 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 587 days, 15:23:09 epoch: 0 iter: 900 max mem : 0  loss: 0.1998, 2d joint loss: 0.1359, 3d joint loss: 0.0088, vertex loss: 0.0550, compute: 7.7978, data: 0.1194, lr: 0.000100
+2023-05-24 03:58:59,217 Graphormer INFO: eta: 587 days, 15:23:09 epoch: 0 iter: 900 max mem : 0  loss: 0.1998, 2d joint loss: 0.1359, 3d joint loss: 0.0088, vertex loss: 0.0550, compute: 7.7978, data: 0.1194, lr: 0.000100
+Losses
+0.19977881972988445
+0.008810550581353407
+0.13594444029447106
+0.05502382897668415
+2023-05-24 03:59:04,390 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 588 days, 19:21:48 epoch: 0 iter: 1000 max mem : 0  loss: 0.1970, 2d joint loss: 0.1346, 3d joint loss: 0.0087, vertex loss: 0.0538, compute: 7.8134, data: 0.1165, lr: 0.000100
+2023-05-24 04:12:14,586 Graphormer INFO: eta: 588 days, 19:21:48 epoch: 0 iter: 1000 max mem : 0  loss: 0.1970, 2d joint loss: 0.1346, 3d joint loss: 0.0087, vertex loss: 0.0538, compute: 7.8134, data: 0.1165, lr: 0.000100
+Losses
+0.19704664788395165
+0.00868977975845337
+0.13459431928023696
+0.05376254903897643
+2023-05-24 04:12:19,538 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 04:24:44,732 Graphormer INFO: eta: 586 days, 15:51:40 epoch: 0 iter: 1100 max mem : 0  loss: 0.1945, 2d joint loss: 0.1332, 3d joint loss: 0.0086, vertex loss: 0.0527, compute: 7.7850, data: 0.1138, lr: 0.000100
+Losses
+0.1945006552203135
+0.00860228687397797
+0.13321859144013037
+0.05267977707087994
+INFO:Graphormer:eta: 586 days, 15:51:40 epoch: 0 iter: 1100 max mem : 0  loss: 0.1945, 2d joint loss: 0.1332, 3d joint loss: 0.0086, vertex loss: 0.0527, compute: 7.7850, data: 0.1138, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 04:24:49,774 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 04:37:13,994 Graphormer INFO: eta: 584 days, 19:34:33 epoch: 0 iter: 1200 max mem : 0  loss: 0.1919, 2d joint loss: 0.1319, 3d joint loss: 0.0085, vertex loss: 0.0516, compute: 7.7607, data: 0.1116, lr: 0.000100
+Losses
+0.19193479416891931
+0.00848703668336384
+0.13187618744249144
+0.05157157023282101
+INFO:Graphormer:eta: 584 days, 19:34:33 epoch: 0 iter: 1200 max mem : 0  loss: 0.1919, 2d joint loss: 0.1319, 3d joint loss: 0.0085, vertex loss: 0.0516, compute: 7.7607, data: 0.1116, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 04:37:19,041 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 583 days, 1:00:18 epoch: 0 iter: 1300 max mem : 0  loss: 0.1899, 2d joint loss: 0.1308, 3d joint loss: 0.0084, vertex loss: 0.0507, compute: 7.7372, data: 0.1097, lr: 0.000100
+2023-05-24 04:49:39,614 Graphormer INFO: eta: 583 days, 1:00:18 epoch: 0 iter: 1300 max mem : 0  loss: 0.1899, 2d joint loss: 0.1308, 3d joint loss: 0.0084, vertex loss: 0.0507, compute: 7.7372, data: 0.1097, lr: 0.000100
+Losses
+0.1899002991674038
+0.008398925492253441
+0.1308326836474813
+0.05066869015303942
+2023-05-24 04:49:44,752 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 581 days, 12:25:37 epoch: 0 iter: 1400 max mem : 0  loss: 0.1882, 2d joint loss: 0.1300, 3d joint loss: 0.0083, vertex loss: 0.0499, compute: 7.7171, data: 0.1081, lr: 0.000100
+2023-05-24 05:02:05,189 Graphormer INFO: eta: 581 days, 12:25:37 epoch: 0 iter: 1400 max mem : 0  loss: 0.1882, 2d joint loss: 0.1300, 3d joint loss: 0.0083, vertex loss: 0.0499, compute: 7.7171, data: 0.1081, lr: 0.000100
+Losses
+0.18820346162787505
+0.00828891163093171
+0.13004728719592096
+0.04986726286554975
+2023-05-24 05:02:10,263 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 05:14:56,993 Graphormer INFO: eta: 581 days, 12:19:19 epoch: 0 iter: 1500 max mem : 0  loss: 0.1864, 2d joint loss: 0.1291, 3d joint loss: 0.0082, vertex loss: 0.0492, compute: 7.7172, data: 0.1067, lr: 0.000100
+Losses
+0.18643572212258974
+0.00818223081327354
+0.1290922474314769
+0.04916124392300844
+INFO:Graphormer:eta: 581 days, 12:19:19 epoch: 0 iter: 1500 max mem : 0  loss: 0.1864, 2d joint loss: 0.1291, 3d joint loss: 0.0082, vertex loss: 0.0492, compute: 7.7172, data: 0.1067, lr: 0.000100
+2023-05-24 05:15:02,124 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 05:35:02,578 Graphormer INFO: eta: 601 days, 22:29:48 epoch: 0 iter: 1600 max mem : 0  loss: 0.1852, 2d joint loss: 0.1285, 3d joint loss: 0.0081, vertex loss: 0.0486, compute: 7.9884, data: 0.1053, lr: 0.000100
+Losses
+0.18518089059274645
+0.008093829618737801
+0.12849388289730995
+0.048593178153969345
+INFO:Graphormer:eta: 601 days, 22:29:48 epoch: 0 iter: 1600 max mem : 0  loss: 0.1852, 2d joint loss: 0.1285, 3d joint loss: 0.0081, vertex loss: 0.0486, compute: 7.9884, data: 0.1053, lr: 0.000100
+2023-05-24 05:35:07,753 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 05:47:23,690 Graphormer INFO: eta: 599 days, 8:52:10 epoch: 0 iter: 1700 max mem : 0  loss: 0.1834, 2d joint loss: 0.1274, 3d joint loss: 0.0080, vertex loss: 0.0480, compute: 7.9544, data: 0.1042, lr: 0.000100
+Losses
+0.18343724035164888
+0.00801516610868823
+0.12739419832387391
+0.04802787601509515
+INFO:Graphormer:eta: 599 days, 8:52:10 epoch: 0 iter: 1700 max mem : 0  loss: 0.1834, 2d joint loss: 0.1274, 3d joint loss: 0.0080, vertex loss: 0.0480, compute: 7.9544, data: 0.1042, lr: 0.000100
+2023-05-24 05:47:28,751 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 597 days, 0:19:07 epoch: 0 iter: 1800 max mem : 0  loss: 0.1816, 2d joint loss: 0.1263, 3d joint loss: 0.0079, vertex loss: 0.0474, compute: 7.9233, data: 0.1034, lr: 0.000100
+2023-05-24 05:59:43,062 Graphormer INFO: eta: 597 days, 0:19:07 epoch: 0 iter: 1800 max mem : 0  loss: 0.1816, 2d joint loss: 0.1263, 3d joint loss: 0.0079, vertex loss: 0.0474, compute: 7.9233, data: 0.1034, lr: 0.000100
+Losses
+0.1816048608513342
+0.00791839794204053
+0.12626290598470305
+0.047423557041005954
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 05:59:48,031 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 598 days, 21:38:29 epoch: 0 iter: 1900 max mem : 0  loss: 0.1797, 2d joint loss: 0.1250, 3d joint loss: 0.0079, vertex loss: 0.0469, compute: 7.9484, data: 0.1028, lr: 0.000100
+2023-05-24 06:13:43,238 Graphormer INFO: eta: 598 days, 21:38:29 epoch: 0 iter: 1900 max mem : 0  loss: 0.1797, 2d joint loss: 0.1250, 3d joint loss: 0.0079, vertex loss: 0.0469, compute: 7.9484, data: 0.1028, lr: 0.000100
+Losses
+0.17973875430461608
+0.007850967342965304
+0.12500086210079883
+0.046886924941484866
+2023-05-24 06:13:53,416 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 06:26:59,137 Graphormer INFO: eta: 598 days, 22:22:27 epoch: 0 iter: 2000 max mem : 0  loss: 0.1777, 2d joint loss: 0.1236, 3d joint loss: 0.0078, vertex loss: 0.0463, compute: 7.9490, data: 0.1048, lr: 0.000100
+Losses
+0.17771924674510955
+0.0077729275531601165
+0.12359915561042727
+0.046347163662314415
+INFO:Graphormer:eta: 598 days, 22:22:27 epoch: 0 iter: 2000 max mem : 0  loss: 0.1777, 2d joint loss: 0.1236, 3d joint loss: 0.0078, vertex loss: 0.0463, compute: 7.9490, data: 0.1048, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 06:27:04,445 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 597 days, 9:40:28 epoch: 0 iter: 2100 max mem : 0  loss: 0.1756, 2d joint loss: 0.1221, 3d joint loss: 0.0077, vertex loss: 0.0458, compute: 7.9288, data: 0.1042, lr: 0.000100
+2023-05-24 06:39:31,670 Graphormer INFO: eta: 597 days, 9:40:28 epoch: 0 iter: 2100 max mem : 0  loss: 0.1756, 2d joint loss: 0.1221, 3d joint loss: 0.0077, vertex loss: 0.0458, compute: 7.9288, data: 0.1042, lr: 0.000100
+Losses
+0.1756395268156415
+0.007683868997153781
+0.12214258214724916
+0.04581307576437082
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 06:39:36,699 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 06:52:32,595 Graphormer INFO: eta: 596 days, 23:37:39 epoch: 0 iter: 2200 max mem : 0  loss: 0.1743, 2d joint loss: 0.1213, 3d joint loss: 0.0076, vertex loss: 0.0454, compute: 7.9234, data: 0.1034, lr: 0.000100
+Losses
+0.17433487871831113
+0.007617903772360561
+0.1213430176472122
+0.045373957400125536
+INFO:Graphormer:eta: 596 days, 23:37:39 epoch: 0 iter: 2200 max mem : 0  loss: 0.1743, 2d joint loss: 0.1213, 3d joint loss: 0.0076, vertex loss: 0.0454, compute: 7.9234, data: 0.1034, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 06:52:37,432 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 632 days, 0:10:42 epoch: 0 iter: 2300 max mem : 0  loss: 0.1729, 2d joint loss: 0.1204, 3d joint loss: 0.0076, vertex loss: 0.0450, compute: 8.3883, data: 0.1024, lr: 0.000100
+2023-05-24 07:23:34,347 Graphormer INFO: eta: 632 days, 0:10:42 epoch: 0 iter: 2300 max mem : 0  loss: 0.1729, 2d joint loss: 0.1204, 3d joint loss: 0.0076, vertex loss: 0.0450, compute: 8.3883, data: 0.1024, lr: 0.000100
+Losses
+0.1729197275865337
+0.007561551005296085
+0.12037911412184653
+0.04497906256791042
+2023-05-24 07:23:39,157 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 650 days, 9:47:03 epoch: 0 iter: 2400 max mem : 0  loss: 0.1713, 2d joint loss: 0.1192, 3d joint loss: 0.0075, vertex loss: 0.0446, compute: 8.6327, data: 0.1019, lr: 0.000100
+2023-05-24 07:47:19,620 Graphormer INFO: eta: 650 days, 9:47:03 epoch: 0 iter: 2400 max mem : 0  loss: 0.1713, 2d joint loss: 0.1192, 3d joint loss: 0.0075, vertex loss: 0.0446, compute: 8.6327, data: 0.1019, lr: 0.000100
+Losses
+0.17132134310280284
+0.007497644199271842
+0.1192445564828813
+0.04457914252532646
+2023-05-24 07:47:24,374 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 08:00:05,535 Graphormer INFO: eta: 647 days, 11:07:53 epoch: 0 iter: 2500 max mem : 0  loss: 0.1699, 2d joint loss: 0.1183, 3d joint loss: 0.0074, vertex loss: 0.0442, compute: 8.5937, data: 0.1012, lr: 0.000100
+Losses
+0.16990855579674244
+0.007432990553788841
+0.11830691574066877
+0.04416864961013198
+INFO:Graphormer:eta: 647 days, 11:07:53 epoch: 0 iter: 2500 max mem : 0  loss: 0.1699, 2d joint loss: 0.1183, 3d joint loss: 0.0074, vertex loss: 0.0442, compute: 8.5937, data: 0.1012, lr: 0.000100
+2023-05-24 08:00:10,330 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 08:12:42,832 Graphormer INFO: eta: 644 days, 11:54:17 epoch: 0 iter: 2600 max mem : 0  loss: 0.1688, 2d joint loss: 0.1176, 3d joint loss: 0.0074, vertex loss: 0.0438, compute: 8.5545, data: 0.1007, lr: 0.000100
+Losses
+0.16875006944514237
+0.007366961464912702
+0.11755481751635671
+0.04382829057052731
+INFO:Graphormer:eta: 644 days, 11:54:17 epoch: 0 iter: 2600 max mem : 0  loss: 0.1688, 2d joint loss: 0.1176, 3d joint loss: 0.0074, vertex loss: 0.0438, compute: 8.5545, data: 0.1007, lr: 0.000100
+2023-05-24 08:12:47,790 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 641 days, 6:14:58 epoch: 0 iter: 2700 max mem : 0  loss: 0.1674, 2d joint loss: 0.1166, 3d joint loss: 0.0073, vertex loss: 0.0435, compute: 8.5117, data: 0.1001, lr: 0.000100
+2023-05-24 08:25:02,676 Graphormer INFO: eta: 641 days, 6:14:58 epoch: 0 iter: 2700 max mem : 0  loss: 0.1674, 2d joint loss: 0.1166, 3d joint loss: 0.0073, vertex loss: 0.0435, compute: 8.5117, data: 0.1001, lr: 0.000100
+Losses
+0.16740963863277877
+0.007308430278897975
+0.11662324266715182
+0.04347796581823517
+2023-05-24 08:25:07,599 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 638 days, 7:19:04 epoch: 0 iter: 2800 max mem : 0  loss: 0.1663, 2d joint loss: 0.1159, 3d joint loss: 0.0073, vertex loss: 0.0432, compute: 8.4726, data: 0.0996, lr: 0.000100
+2023-05-24 08:37:24,365 Graphormer INFO: eta: 638 days, 7:19:04 epoch: 0 iter: 2800 max mem : 0  loss: 0.1663, 2d joint loss: 0.1159, 3d joint loss: 0.0073, vertex loss: 0.0432, compute: 8.4726, data: 0.0996, lr: 0.000100
+Losses
+0.16631696783272285
+0.007260380030992174
+0.11588726559786924
+0.04316932235711387
+2023-05-24 08:37:29,281 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 635 days, 14:14:36 epoch: 0 iter: 2900 max mem : 0  loss: 0.1652, 2d joint loss: 0.1151, 3d joint loss: 0.0072, vertex loss: 0.0428, compute: 8.4367, data: 0.0991, lr: 0.000100
+2023-05-24 08:49:47,624 Graphormer INFO: eta: 635 days, 14:14:36 epoch: 0 iter: 2900 max mem : 0  loss: 0.1652, 2d joint loss: 0.1151, 3d joint loss: 0.0072, vertex loss: 0.0428, compute: 8.4367, data: 0.0991, lr: 0.000100
+Losses
+0.16515524513505656
+0.007202453917647102
+0.11512038724432731
+0.04283240411430597
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 08:49:52,521 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 09:02:09,455 Graphormer INFO: eta: 633 days, 0:37:57 epoch: 0 iter: 3000 max mem : 0  loss: 0.1639, 2d joint loss: 0.1143, 3d joint loss: 0.0071, vertex loss: 0.0425, compute: 8.4027, data: 0.0986, lr: 0.000100
+Losses
+0.16387786118686198
+0.007135369085008278
+0.11426339301094413
+0.04247909924015403
+INFO:Graphormer:eta: 633 days, 0:37:57 epoch: 0 iter: 3000 max mem : 0  loss: 0.1639, 2d joint loss: 0.1143, 3d joint loss: 0.0071, vertex loss: 0.0425, compute: 8.4027, data: 0.0986, lr: 0.000100
+2023-05-24 09:02:14,302 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 09:14:33,869 Graphormer INFO: eta: 630 days, 16:29:22 epoch: 0 iter: 3100 max mem : 0  loss: 0.1629, 2d joint loss: 0.1136, 3d joint loss: 0.0071, vertex loss: 0.0421, compute: 8.3718, data: 0.0982, lr: 0.000100
+Losses
+0.16285442364311986
+0.007070791734863193
+0.11363453200868061
+0.042149100047686405
+INFO:Graphormer:eta: 630 days, 16:29:22 epoch: 0 iter: 3100 max mem : 0  loss: 0.1629, 2d joint loss: 0.1136, 3d joint loss: 0.0071, vertex loss: 0.0421, compute: 8.3718, data: 0.0982, lr: 0.000100
+2023-05-24 09:14:38,734 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 628 days, 17:43:43 epoch: 0 iter: 3200 max mem : 0  loss: 0.1616, 2d joint loss: 0.1128, 3d joint loss: 0.0070, vertex loss: 0.0418, compute: 8.3461, data: 0.0978, lr: 0.000100
+2023-05-24 09:27:08,702 Graphormer INFO: eta: 628 days, 17:43:43 epoch: 0 iter: 3200 max mem : 0  loss: 0.1616, 2d joint loss: 0.1128, 3d joint loss: 0.0070, vertex loss: 0.0418, compute: 8.3461, data: 0.0978, lr: 0.000100
+Losses
+0.16162776928627864
+0.0070089100773475365
+0.11278997308807448
+0.04182888626004569
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 09:27:13,552 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 627 days, 12:52:37 epoch: 0 iter: 3300 max mem : 0  loss: 0.1606, 2d joint loss: 0.1121, 3d joint loss: 0.0070, vertex loss: 0.0415, compute: 8.3303, data: 0.0974, lr: 0.000100
+2023-05-24 09:40:11,073 Graphormer INFO: eta: 627 days, 12:52:37 epoch: 0 iter: 3300 max mem : 0  loss: 0.1606, 2d joint loss: 0.1121, 3d joint loss: 0.0070, vertex loss: 0.0415, compute: 8.3303, data: 0.0974, lr: 0.000100
+Losses
+0.16056802848071763
+0.00695128013323428
+0.11208403740981311
+0.041532711062128795
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 09:40:29,418 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 09:53:21,712 Graphormer INFO: eta: 626 days, 14:06:24 epoch: 0 iter: 3400 max mem : 0  loss: 0.1595, 2d joint loss: 0.1114, 3d joint loss: 0.0069, vertex loss: 0.0412, compute: 8.3178, data: 0.1011, lr: 0.000100
+Losses
+0.15951560088597677
+0.006891575176885132
+0.11138354735558524
+0.041240478483412196
+INFO:Graphormer:eta: 626 days, 14:06:24 epoch: 0 iter: 3400 max mem : 0  loss: 0.1595, 2d joint loss: 0.1114, 3d joint loss: 0.0069, vertex loss: 0.0412, compute: 8.3178, data: 0.1011, lr: 0.000100
+2023-05-24 09:53:26,790 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 625 days, 5:58:08 epoch: 0 iter: 3500 max mem : 0  loss: 0.1588, 2d joint loss: 0.1110, 3d joint loss: 0.0068, vertex loss: 0.0410, compute: 8.3001, data: 0.1008, lr: 0.000100
+2023-05-24 10:06:11,723 Graphormer INFO: eta: 625 days, 5:58:08 epoch: 0 iter: 3500 max mem : 0  loss: 0.1588, 2d joint loss: 0.1110, 3d joint loss: 0.0068, vertex loss: 0.0410, compute: 8.3001, data: 0.1008, lr: 0.000100
+Losses
+0.15881352958934647
+0.006844133877927172
+0.11097413216211965
+0.04099526365793177
+2023-05-24 10:06:16,683 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 10:18:49,103 Graphormer INFO: eta: 623 days, 17:15:43 epoch: 0 iter: 3600 max mem : 0  loss: 0.1579, 2d joint loss: 0.1104, 3d joint loss: 0.0068, vertex loss: 0.0407, compute: 8.2800, data: 0.1004, lr: 0.000100
+Losses
+0.15793491798556514
+0.006797705041244626
+0.11039298063971931
+0.04074423242412094
+INFO:Graphormer:eta: 623 days, 17:15:43 epoch: 0 iter: 3600 max mem : 0  loss: 0.1579, 2d joint loss: 0.1104, 3d joint loss: 0.0068, vertex loss: 0.0407, compute: 8.2800, data: 0.1004, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 10:18:54,027 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 622 days, 3:48:37 epoch: 0 iter: 3700 max mem : 0  loss: 0.1573, 2d joint loss: 0.1100, 3d joint loss: 0.0068, vertex loss: 0.0405, compute: 8.2594, data: 0.1001, lr: 0.000100
+2023-05-24 10:31:20,922 Graphormer INFO: eta: 622 days, 3:48:37 epoch: 0 iter: 3700 max mem : 0  loss: 0.1573, 2d joint loss: 0.1100, 3d joint loss: 0.0068, vertex loss: 0.0405, compute: 8.2594, data: 0.1001, lr: 0.000100
+Losses
+0.15725494530958098
+0.006752905928076723
+0.1099813542474766
+0.040520685252708355
+2023-05-24 10:31:25,733 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 10:43:52,404 Graphormer INFO: eta: 620 days, 16:09:31 epoch: 0 iter: 3800 max mem : 0  loss: 0.1563, 2d joint loss: 0.1093, 3d joint loss: 0.0067, vertex loss: 0.0403, compute: 8.2398, data: 0.0998, lr: 0.000100
+Losses
+0.15633399052643462
+0.006703686085590897
+0.10934882221057227
+0.04028148234282669
+INFO:Graphormer:eta: 620 days, 16:09:31 epoch: 0 iter: 3800 max mem : 0  loss: 0.1563, 2d joint loss: 0.1093, 3d joint loss: 0.0067, vertex loss: 0.0403, compute: 8.2398, data: 0.0998, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 10:43:57,245 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 619 days, 6:43:41 epoch: 0 iter: 3900 max mem : 0  loss: 0.1554, 2d joint loss: 0.1087, 3d joint loss: 0.0066, vertex loss: 0.0400, compute: 8.2214, data: 0.0994, lr: 0.000100
+2023-05-24 10:56:24,757 Graphormer INFO: eta: 619 days, 6:43:41 epoch: 0 iter: 3900 max mem : 0  loss: 0.1554, 2d joint loss: 0.1087, 3d joint loss: 0.0066, vertex loss: 0.0400, compute: 8.2214, data: 0.0994, lr: 0.000100
+Losses
+0.15536469302116296
+0.0066422490946327645
+0.10869389787698404
+0.04002854614924544
+2023-05-24 10:56:29,586 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 11:08:57,064 Graphormer INFO: eta: 617 days, 22:56:18 epoch: 0 iter: 4000 max mem : 0  loss: 0.1545, 2d joint loss: 0.1081, 3d joint loss: 0.0066, vertex loss: 0.0398, compute: 8.2040, data: 0.0991, lr: 0.000100
+Losses
+0.15454482673481107
+0.006595177323673851
+0.108132178270258
+0.03981747123133391
+INFO:Graphormer:eta: 617 days, 22:56:18 epoch: 0 iter: 4000 max mem : 0  loss: 0.1545, 2d joint loss: 0.1081, 3d joint loss: 0.0066, vertex loss: 0.0398, compute: 8.2040, data: 0.0991, lr: 0.000100
+2023-05-24 11:09:01,866 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 11:21:30,927 Graphormer INFO: eta: 616 days, 17:22:28 epoch: 0 iter: 4100 max mem : 0  loss: 0.1540, 2d joint loss: 0.1078, 3d joint loss: 0.0066, vertex loss: 0.0396, compute: 8.1877, data: 0.0987, lr: 0.000100
+Losses
+0.15397741496381237
+0.006559721527893732
+0.1077768169652398
+0.0396408765599495
+INFO:Graphormer:eta: 616 days, 17:22:28 epoch: 0 iter: 4100 max mem : 0  loss: 0.1540, 2d joint loss: 0.1078, 3d joint loss: 0.0066, vertex loss: 0.0396, compute: 8.1877, data: 0.0987, lr: 0.000100
+2023-05-24 11:21:35,750 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 615 days, 13:44:19 epoch: 0 iter: 4200 max mem : 0  loss: 0.1534, 2d joint loss: 0.1074, 3d joint loss: 0.0065, vertex loss: 0.0395, compute: 8.1726, data: 0.0984, lr: 0.000100
+2023-05-24 11:34:06,021 Graphormer INFO: eta: 615 days, 13:44:19 epoch: 0 iter: 4200 max mem : 0  loss: 0.1534, 2d joint loss: 0.1074, 3d joint loss: 0.0065, vertex loss: 0.0395, compute: 8.1726, data: 0.0984, lr: 0.000100
+Losses
+0.15339731497601383
+0.006527828366573279
+0.10739786854279892
+0.039471618142865955
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 11:34:10,806 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 11:46:42,279 Graphormer INFO: eta: 614 days, 11:52:05 epoch: 0 iter: 4300 max mem : 0  loss: 0.1528, 2d joint loss: 0.1070, 3d joint loss: 0.0065, vertex loss: 0.0393, compute: 8.1584, data: 0.0982, lr: 0.000100
+Losses
+0.15280439743642196
+0.006493022980460854
+0.10701564971011045
+0.03929572480535785
+INFO:Graphormer:eta: 614 days, 11:52:05 epoch: 0 iter: 4300 max mem : 0  loss: 0.1528, 2d joint loss: 0.1070, 3d joint loss: 0.0065, vertex loss: 0.0393, compute: 8.1584, data: 0.0982, lr: 0.000100
+2023-05-24 11:46:47,062 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 613 days, 10:43:03 epoch: 0 iter: 4400 max mem : 0  loss: 0.1520, 2d joint loss: 0.1065, 3d joint loss: 0.0065, vertex loss: 0.0391, compute: 8.1446, data: 0.0978, lr: 0.000100
+2023-05-24 11:59:17,452 Graphormer INFO: eta: 613 days, 10:43:03 epoch: 0 iter: 4400 max mem : 0  loss: 0.1520, 2d joint loss: 0.1065, 3d joint loss: 0.0065, vertex loss: 0.0391, compute: 8.1446, data: 0.0978, lr: 0.000100
+Losses
+0.15202962515875698
+0.006451485424027355
+0.10646305165930905
+0.0391150881358507
+2023-05-24 11:59:22,317 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 12:11:55,556 Graphormer INFO: eta: 612 days, 11:51:11 epoch: 0 iter: 4500 max mem : 0  loss: 0.1514, 2d joint loss: 0.1060, 3d joint loss: 0.0064, vertex loss: 0.0390, compute: 8.1321, data: 0.0976, lr: 0.000100
+Losses
+0.1513557632068793
+0.006421703137095189
+0.10595254771328634
+0.03898151242153512
+INFO:Graphormer:eta: 612 days, 11:51:11 epoch: 0 iter: 4500 max mem : 0  loss: 0.1514, 2d joint loss: 0.1060, 3d joint loss: 0.0064, vertex loss: 0.0390, compute: 8.1321, data: 0.0976, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 12:12:00,331 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 611 days, 13:07:13 epoch: 0 iter: 4600 max mem : 0  loss: 0.1506, 2d joint loss: 0.1055, 3d joint loss: 0.0064, vertex loss: 0.0388, compute: 8.1196, data: 0.0974, lr: 0.000100
+2023-05-24 12:24:31,488 Graphormer INFO: eta: 611 days, 13:07:13 epoch: 0 iter: 4600 max mem : 0  loss: 0.1506, 2d joint loss: 0.1055, 3d joint loss: 0.0064, vertex loss: 0.0388, compute: 8.1196, data: 0.0974, lr: 0.000100
+Losses
+0.15062307055553664
+0.006378429332474732
+0.10545530529773754
+0.03878933598611342
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 12:24:36,219 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 610 days, 15:17:24 epoch: 0 iter: 4700 max mem : 0  loss: 0.1500, 2d joint loss: 0.1050, 3d joint loss: 0.0063, vertex loss: 0.0386, compute: 8.1077, data: 0.0971, lr: 0.000100
+2023-05-24 12:37:07,275 Graphormer INFO: eta: 610 days, 15:17:24 epoch: 0 iter: 4700 max mem : 0  loss: 0.1500, 2d joint loss: 0.1050, 3d joint loss: 0.0063, vertex loss: 0.0386, compute: 8.1077, data: 0.0971, lr: 0.000100
+Losses
+0.14995564033534933
+0.006339841918509573
+0.10499720836494197
+0.038618590110080675
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 12:37:11,991 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 12:49:42,944 Graphormer INFO: eta: 609 days, 18:18:59 epoch: 0 iter: 4800 max mem : 0  loss: 0.1493, 2d joint loss: 0.1045, 3d joint loss: 0.0063, vertex loss: 0.0385, compute: 8.0962, data: 0.0968, lr: 0.000100
+Losses
+0.14929140316632886
+0.006303845760630793
+0.10453249873127789
+0.03845505872624926
+INFO:Graphormer:eta: 609 days, 18:18:59 epoch: 0 iter: 4800 max mem : 0  loss: 0.1493, 2d joint loss: 0.1045, 3d joint loss: 0.0063, vertex loss: 0.0385, compute: 8.0962, data: 0.0968, lr: 0.000100
+2023-05-24 12:49:47,714 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 13:02:16,799 Graphormer INFO: eta: 608 days, 21:31:13 epoch: 0 iter: 4900 max mem : 0  loss: 0.1486, 2d joint loss: 0.1041, 3d joint loss: 0.0063, vertex loss: 0.0383, compute: 8.0848, data: 0.0966, lr: 0.000100
+Losses
+0.14863044806889125
+0.006268766324002562
+0.10406140263439441
+0.03830027916297621
+INFO:Graphormer:eta: 608 days, 21:31:13 epoch: 0 iter: 4900 max mem : 0  loss: 0.1486, 2d joint loss: 0.1041, 3d joint loss: 0.0063, vertex loss: 0.0383, compute: 8.0848, data: 0.0966, lr: 0.000100
+2023-05-24 13:02:21,622 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 13:14:53,197 Graphormer INFO: eta: 608 days, 2:28:05 epoch: 0 iter: 5000 max mem : 0  loss: 0.1479, 2d joint loss: 0.1035, 3d joint loss: 0.0062, vertex loss: 0.0381, compute: 8.0744, data: 0.0964, lr: 0.000100
+Losses
+0.14787657887786626
+0.006234410320431925
+0.1034945582933724
+0.03814761031940579
+INFO:Graphormer:eta: 608 days, 2:28:05 epoch: 0 iter: 5000 max mem : 0  loss: 0.1479, 2d joint loss: 0.1035, 3d joint loss: 0.0062, vertex loss: 0.0381, compute: 8.0744, data: 0.0964, lr: 0.000100
+2023-05-24 13:14:57,994 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 607 days, 7:12:00 epoch: 0 iter: 5100 max mem : 0  loss: 0.1473, 2d joint loss: 0.1030, 3d joint loss: 0.0062, vertex loss: 0.0380, compute: 8.0639, data: 0.0961, lr: 0.000100
+2023-05-24 13:27:26,903 Graphormer INFO: eta: 607 days, 7:12:00 epoch: 0 iter: 5100 max mem : 0  loss: 0.1473, 2d joint loss: 0.1030, 3d joint loss: 0.0062, vertex loss: 0.0380, compute: 8.0639, data: 0.0961, lr: 0.000100
+Losses
+0.1472512182403429
+0.00620208049816189
+0.10303803043476507
+0.03801110736039631
+2023-05-24 13:27:43,152 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 606 days, 16:29:11 epoch: 0 iter: 5200 max mem : 0  loss: 0.1467, 2d joint loss: 0.1026, 3d joint loss: 0.0062, vertex loss: 0.0379, compute: 8.0558, data: 0.0981, lr: 0.000100
+2023-05-24 13:40:11,603 Graphormer INFO: eta: 606 days, 16:29:11 epoch: 0 iter: 5200 max mem : 0  loss: 0.1467, 2d joint loss: 0.1026, 3d joint loss: 0.0062, vertex loss: 0.0379, compute: 8.0558, data: 0.0981, lr: 0.000100
+Losses
+0.14669669876161676
+0.006174235408745097
+0.10263395719946578
+0.037888506209979265
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 13:40:20,314 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 606 days, 0:05:54 epoch: 0 iter: 5300 max mem : 0  loss: 0.1460, 2d joint loss: 0.1021, 3d joint loss: 0.0061, vertex loss: 0.0378, compute: 8.0469, data: 0.0986, lr: 0.000100
+2023-05-24 13:52:49,788 Graphormer INFO: eta: 606 days, 0:05:54 epoch: 0 iter: 5300 max mem : 0  loss: 0.1460, 2d joint loss: 0.1021, 3d joint loss: 0.0061, vertex loss: 0.0378, compute: 8.0469, data: 0.0986, lr: 0.000100
+Losses
+0.1459946185589399
+0.006141205646892798
+0.10210030409454737
+0.03775310887234672
+2023-05-24 13:52:58,016 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 14:05:26,268 Graphormer INFO: eta: 605 days, 7:44:18 epoch: 0 iter: 5400 max mem : 0  loss: 0.1454, 2d joint loss: 0.1017, 3d joint loss: 0.0061, vertex loss: 0.0376, compute: 8.0380, data: 0.0990, lr: 0.000100
+Losses
+0.14542047196309324
+0.006112891816064129
+0.10166868247643665
+0.03763889771472249
+INFO:Graphormer:eta: 605 days, 7:44:18 epoch: 0 iter: 5400 max mem : 0  loss: 0.1454, 2d joint loss: 0.1017, 3d joint loss: 0.0061, vertex loss: 0.0376, compute: 8.0380, data: 0.0990, lr: 0.000100
+2023-05-24 14:05:31,081 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 604 days, 15:52:07 epoch: 0 iter: 5500 max mem : 0  loss: 0.1448, 2d joint loss: 0.1012, 3d joint loss: 0.0061, vertex loss: 0.0375, compute: 8.0293, data: 0.0987, lr: 0.000100
+2023-05-24 14:18:02,451 Graphormer INFO: eta: 604 days, 15:52:07 epoch: 0 iter: 5500 max mem : 0  loss: 0.1448, 2d joint loss: 0.1012, 3d joint loss: 0.0061, vertex loss: 0.0375, compute: 8.0293, data: 0.0987, lr: 0.000100
+Losses
+0.14480670597810638
+0.006077188595811921
+0.10122463063963436
+0.037504886780272834
+2023-05-24 14:18:07,210 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 14:30:37,636 Graphormer INFO: eta: 604 days, 0:14:10 epoch: 0 iter: 5600 max mem : 0  loss: 0.1443, 2d joint loss: 0.1009, 3d joint loss: 0.0061, vertex loss: 0.0374, compute: 8.0208, data: 0.0985, lr: 0.000100
+Losses
+0.14432196559850127
+0.006050804824813635
+0.10086503029601382
+0.03740613051623638
+INFO:Graphormer:eta: 604 days, 0:14:10 epoch: 0 iter: 5600 max mem : 0  loss: 0.1443, 2d joint loss: 0.1009, 3d joint loss: 0.0061, vertex loss: 0.0374, compute: 8.0208, data: 0.0985, lr: 0.000100
+2023-05-24 14:30:42,397 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 603 days, 9:24:35 epoch: 0 iter: 5700 max mem : 0  loss: 0.1437, 2d joint loss: 0.1004, 3d joint loss: 0.0060, vertex loss: 0.0373, compute: 8.0127, data: 0.0983, lr: 0.000100
+2023-05-24 14:43:13,658 Graphormer INFO: eta: 603 days, 9:24:35 epoch: 0 iter: 5700 max mem : 0  loss: 0.1437, 2d joint loss: 0.1004, 3d joint loss: 0.0060, vertex loss: 0.0373, compute: 8.0127, data: 0.0983, lr: 0.000100
+Losses
+0.14370906800619865
+0.00602182091575263
+0.10040908652504808
+0.03727816060348822
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 14:43:18,500 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 602 days, 18:48:11 epoch: 0 iter: 5800 max mem : 0  loss: 0.1431, 2d joint loss: 0.1000, 3d joint loss: 0.0060, vertex loss: 0.0372, compute: 8.0047, data: 0.0981, lr: 0.000100
+2023-05-24 14:55:48,766 Graphormer INFO: eta: 602 days, 18:48:11 epoch: 0 iter: 5800 max mem : 0  loss: 0.1431, 2d joint loss: 0.1000, 3d joint loss: 0.0060, vertex loss: 0.0372, compute: 8.0047, data: 0.0981, lr: 0.000100
+Losses
+0.14311637222060355
+0.005992949226497801
+0.09996718758588721
+0.03715623543469299
+2023-05-24 14:55:53,629 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 602 days, 4:14:21 epoch: 0 iter: 5900 max mem : 0  loss: 0.1426, 2d joint loss: 0.0996, 3d joint loss: 0.0060, vertex loss: 0.0370, compute: 7.9968, data: 0.0979, lr: 0.000100
+2023-05-24 15:08:22,423 Graphormer INFO: eta: 602 days, 4:14:21 epoch: 0 iter: 5900 max mem : 0  loss: 0.1426, 2d joint loss: 0.0996, 3d joint loss: 0.0060, vertex loss: 0.0370, compute: 7.9968, data: 0.0979, lr: 0.000100
+Losses
+0.1425797197652065
+0.005964421704865329
+0.09957567571962284
+0.03703962235822011
+2023-05-24 15:08:27,201 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 15:21:01,088 Graphormer INFO: eta: 601 days, 15:39:46 epoch: 0 iter: 6000 max mem : 0  loss: 0.1420, 2d joint loss: 0.0992, 3d joint loss: 0.0059, vertex loss: 0.0369, compute: 7.9900, data: 0.0977, lr: 0.000100
+Losses
+0.1420196261977156
+0.005937237898566915
+0.09915889979402225
+0.03692348851449788
+INFO:Graphormer:eta: 601 days, 15:39:46 epoch: 0 iter: 6000 max mem : 0  loss: 0.1420, 2d joint loss: 0.0992, 3d joint loss: 0.0059, vertex loss: 0.0369, compute: 7.9900, data: 0.0977, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 15:21:05,777 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 15:33:34,643 Graphormer INFO: eta: 601 days, 1:58:41 epoch: 0 iter: 6100 max mem : 0  loss: 0.1414, 2d joint loss: 0.0987, 3d joint loss: 0.0059, vertex loss: 0.0368, compute: 7.9825, data: 0.0974, lr: 0.000100
+Losses
+0.14140325782301486
+0.005912664570200608
+0.09867244695084261
+0.03681814630928098
+INFO:Graphormer:eta: 601 days, 1:58:41 epoch: 0 iter: 6100 max mem : 0  loss: 0.1414, 2d joint loss: 0.0987, 3d joint loss: 0.0059, vertex loss: 0.0368, compute: 7.9825, data: 0.0974, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 15:33:39,504 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 600 days, 16:06:55 epoch: 0 iter: 6200 max mem : 0  loss: 0.1409, 2d joint loss: 0.0983, 3d joint loss: 0.0059, vertex loss: 0.0367, compute: 7.9772, data: 0.0973, lr: 0.000100
+2023-05-24 15:46:19,820 Graphormer INFO: eta: 600 days, 16:06:55 epoch: 0 iter: 6200 max mem : 0  loss: 0.1409, 2d joint loss: 0.0983, 3d joint loss: 0.0059, vertex loss: 0.0367, compute: 7.9772, data: 0.0973, lr: 0.000100
+Losses
+0.14086672876691145
+0.005885804854577497
+0.09826870694456082
+0.036712216981236015
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 15:46:24,757 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 600 days, 1:44:40 epoch: 0 iter: 6300 max mem : 0  loss: 0.1403, 2d joint loss: 0.0979, 3d joint loss: 0.0059, vertex loss: 0.0366, compute: 7.9694, data: 0.0971, lr: 0.000100
+2023-05-24 15:58:48,214 Graphormer INFO: eta: 600 days, 1:44:40 epoch: 0 iter: 6300 max mem : 0  loss: 0.1403, 2d joint loss: 0.0979, 3d joint loss: 0.0059, vertex loss: 0.0366, compute: 7.9694, data: 0.0971, lr: 0.000100
+Losses
+0.14031787623015662
+0.0058597244315278085
+0.09785517318085546
+0.036602978628010506
+2023-05-24 15:58:53,263 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 599 days, 12:29:19 epoch: 0 iter: 6400 max mem : 0  loss: 0.1398, 2d joint loss: 0.0975, 3d joint loss: 0.0058, vertex loss: 0.0365, compute: 7.9621, data: 0.0969, lr: 0.000100
+2023-05-24 16:11:18,987 Graphormer INFO: eta: 599 days, 12:29:19 epoch: 0 iter: 6400 max mem : 0  loss: 0.1398, 2d joint loss: 0.0975, 3d joint loss: 0.0058, vertex loss: 0.0365, compute: 7.9621, data: 0.0969, lr: 0.000100
+Losses
+0.13979607474931982
+0.005833508857485867
+0.09747606768214609
+0.03648649822105653
+2023-05-24 16:11:23,740 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 598 days, 22:44:14 epoch: 0 iter: 6500 max mem : 0  loss: 0.1392, 2d joint loss: 0.0970, 3d joint loss: 0.0058, vertex loss: 0.0364, compute: 7.9547, data: 0.0968, lr: 0.000100
+2023-05-24 16:23:46,535 Graphormer INFO: eta: 598 days, 22:44:14 epoch: 0 iter: 6500 max mem : 0  loss: 0.1392, 2d joint loss: 0.0970, 3d joint loss: 0.0058, vertex loss: 0.0364, compute: 7.9547, data: 0.0968, lr: 0.000100
+Losses
+0.13920103021309926
+0.005805865444798166
+0.09701925336655516
+0.036375911412903895
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 16:23:51,318 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 16:36:13,786 Graphormer INFO: eta: 598 days, 9:18:54 epoch: 0 iter: 6600 max mem : 0  loss: 0.1387, 2d joint loss: 0.0966, 3d joint loss: 0.0058, vertex loss: 0.0363, compute: 7.9474, data: 0.0966, lr: 0.000100
+Losses
+0.13869004585018213
+0.005781774335403249
+0.096636820905983
+0.036271450614669555
+INFO:Graphormer:eta: 598 days, 9:18:54 epoch: 0 iter: 6600 max mem : 0  loss: 0.1387, 2d joint loss: 0.0966, 3d joint loss: 0.0058, vertex loss: 0.0363, compute: 7.9474, data: 0.0966, lr: 0.000100
+2023-05-24 16:36:18,550 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 16:48:41,652 Graphormer INFO: eta: 597 days, 20:27:10 epoch: 0 iter: 6700 max mem : 0  loss: 0.1382, 2d joint loss: 0.0963, 3d joint loss: 0.0058, vertex loss: 0.0362, compute: 7.9404, data: 0.0964, lr: 0.000100
+Losses
+0.1382182014038536
+0.005762346165494493
+0.09626916636810151
+0.03618668887986621
+INFO:Graphormer:eta: 597 days, 20:27:10 epoch: 0 iter: 6700 max mem : 0  loss: 0.1382, 2d joint loss: 0.0963, 3d joint loss: 0.0058, vertex loss: 0.0362, compute: 7.9404, data: 0.0964, lr: 0.000100
+2023-05-24 16:48:46,446 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 17:01:10,390 Graphormer INFO: eta: 597 days, 8:11:41 epoch: 0 iter: 6800 max mem : 0  loss: 0.1377, 2d joint loss: 0.0959, 3d joint loss: 0.0057, vertex loss: 0.0361, compute: 7.9337, data: 0.0962, lr: 0.000100
+Losses
+0.13769523377201576
+0.005742384965141194
+0.09586086157490226
+0.036091987244127426
+INFO:Graphormer:eta: 597 days, 8:11:41 epoch: 0 iter: 6800 max mem : 0  loss: 0.1377, 2d joint loss: 0.0959, 3d joint loss: 0.0057, vertex loss: 0.0361, compute: 7.9337, data: 0.0962, lr: 0.000100
+2023-05-24 17:01:15,291 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 596 days, 21:00:56 epoch: 0 iter: 6900 max mem : 0  loss: 0.1372, 2d joint loss: 0.0954, 3d joint loss: 0.0057, vertex loss: 0.0360, compute: 7.9276, data: 0.0961, lr: 0.000100
+2023-05-24 17:13:41,913 Graphormer INFO: eta: 596 days, 21:00:56 epoch: 0 iter: 6900 max mem : 0  loss: 0.1372, 2d joint loss: 0.0954, 3d joint loss: 0.0057, vertex loss: 0.0360, compute: 7.9276, data: 0.0961, lr: 0.000100
+Losses
+0.1371553580970436
+0.005716836787692771
+0.09544884921146043
+0.035989672108620835
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 17:13:46,773 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 17:26:11,823 Graphormer INFO: eta: 596 days, 9:44:00 epoch: 0 iter: 7000 max mem : 0  loss: 0.1367, 2d joint loss: 0.0951, 3d joint loss: 0.0057, vertex loss: 0.0359, compute: 7.9215, data: 0.0959, lr: 0.000100
+Losses
+0.13666963029865709
+0.00569317302064571
+0.09508082605419414
+0.035895631236157244
+INFO:Graphormer:eta: 596 days, 9:44:00 epoch: 0 iter: 7000 max mem : 0  loss: 0.1367, 2d joint loss: 0.0951, 3d joint loss: 0.0057, vertex loss: 0.0359, compute: 7.9215, data: 0.0959, lr: 0.000100
+2023-05-24 17:26:16,695 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 17:38:40,454 Graphormer INFO: eta: 595 days, 22:26:15 epoch: 0 iter: 7100 max mem : 0  loss: 0.1362, 2d joint loss: 0.0947, 3d joint loss: 0.0057, vertex loss: 0.0358, compute: 7.9154, data: 0.0958, lr: 0.000100
+Losses
+0.13621164953414822
+0.005671338512444161
+0.09473740972473588
+0.035802901311659474
+INFO:Graphormer:eta: 595 days, 22:26:15 epoch: 0 iter: 7100 max mem : 0  loss: 0.1362, 2d joint loss: 0.0947, 3d joint loss: 0.0057, vertex loss: 0.0358, compute: 7.9154, data: 0.0958, lr: 0.000100
+2023-05-24 17:38:45,319 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 17:51:09,616 Graphormer INFO: eta: 595 days, 11:34:58 epoch: 0 iter: 7200 max mem : 0  loss: 0.1356, 2d joint loss: 0.0943, 3d joint loss: 0.0056, vertex loss: 0.0357, compute: 7.9095, data: 0.0957, lr: 0.000100
+Losses
+0.13563740449802328
+0.005645363111074807
+0.0942942876705072
+0.03569775372691866
+INFO:Graphormer:eta: 595 days, 11:34:58 epoch: 0 iter: 7200 max mem : 0  loss: 0.1356, 2d joint loss: 0.0943, 3d joint loss: 0.0056, vertex loss: 0.0357, compute: 7.9095, data: 0.0957, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 17:51:14,449 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 595 days, 0:51:26 epoch: 0 iter: 7300 max mem : 0  loss: 0.1352, 2d joint loss: 0.0940, 3d joint loss: 0.0056, vertex loss: 0.0356, compute: 7.9037, data: 0.0955, lr: 0.000100
+2023-05-24 18:03:38,122 Graphormer INFO: eta: 595 days, 0:51:26 epoch: 0 iter: 7300 max mem : 0  loss: 0.1352, 2d joint loss: 0.0940, 3d joint loss: 0.0056, vertex loss: 0.0356, compute: 7.9037, data: 0.0955, lr: 0.000100
+Losses
+0.13519854503288253
+0.00562190113681662
+0.09397845182057521
+0.03559819208330488
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 18:03:42,923 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 18:16:09,774 Graphormer INFO: eta: 594 days, 15:11:05 epoch: 0 iter: 7400 max mem : 0  loss: 0.1347, 2d joint loss: 0.0936, 3d joint loss: 0.0056, vertex loss: 0.0355, compute: 7.8985, data: 0.0953, lr: 0.000100
+Losses
+0.13469807170230794
+0.005599731585935916
+0.0935931767528323
+0.0355051633728215
+INFO:Graphormer:eta: 594 days, 15:11:05 epoch: 0 iter: 7400 max mem : 0  loss: 0.1347, 2d joint loss: 0.0936, 3d joint loss: 0.0056, vertex loss: 0.0355, compute: 7.8985, data: 0.0953, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 18:16:18,055 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 18:28:42,232 Graphormer INFO: eta: 594 days, 5:57:30 epoch: 0 iter: 7500 max mem : 0  loss: 0.1342, 2d joint loss: 0.0932, 3d joint loss: 0.0056, vertex loss: 0.0354, compute: 7.8935, data: 0.0957, lr: 0.000100
+Losses
+0.1341610469698906
+0.005574797725708534
+0.0931811471303304
+0.03540510212232669
+INFO:Graphormer:eta: 594 days, 5:57:30 epoch: 0 iter: 7500 max mem : 0  loss: 0.1342, 2d joint loss: 0.0932, 3d joint loss: 0.0056, vertex loss: 0.0354, compute: 7.8935, data: 0.0957, lr: 0.000100
+2023-05-24 18:28:47,105 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 18:41:10,994 Graphormer INFO: eta: 593 days, 20:05:27 epoch: 0 iter: 7600 max mem : 0  loss: 0.1336, 2d joint loss: 0.0927, 3d joint loss: 0.0056, vertex loss: 0.0353, compute: 7.8881, data: 0.0956, lr: 0.000100
+Losses
+0.13360179114841708
+0.005551721556694247
+0.09274611562073819
+0.035303953975733174
+INFO:Graphormer:eta: 593 days, 20:05:27 epoch: 0 iter: 7600 max mem : 0  loss: 0.1336, 2d joint loss: 0.0927, 3d joint loss: 0.0056, vertex loss: 0.0353, compute: 7.8881, data: 0.0956, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 18:41:15,815 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 18:53:40,375 Graphormer INFO: eta: 593 days, 10:37:09 epoch: 0 iter: 7700 max mem : 0  loss: 0.1332, 2d joint loss: 0.0924, 3d joint loss: 0.0055, vertex loss: 0.0352, compute: 7.8830, data: 0.0954, lr: 0.000100
+Losses
+0.1331755317868544
+0.005528562332294857
+0.09242706671163634
+0.035219902750830374
+INFO:Graphormer:eta: 593 days, 10:37:09 epoch: 0 iter: 7700 max mem : 0  loss: 0.1332, 2d joint loss: 0.0924, 3d joint loss: 0.0055, vertex loss: 0.0352, compute: 7.8830, data: 0.0954, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 18:53:45,197 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 593 days, 1:31:28 epoch: 0 iter: 7800 max mem : 0  loss: 0.1327, 2d joint loss: 0.0921, 3d joint loss: 0.0055, vertex loss: 0.0351, compute: 7.8781, data: 0.0953, lr: 0.000100
+2023-05-24 19:06:10,359 Graphormer INFO: eta: 593 days, 1:31:28 epoch: 0 iter: 7800 max mem : 0  loss: 0.1327, 2d joint loss: 0.0921, 3d joint loss: 0.0055, vertex loss: 0.0351, compute: 7.8781, data: 0.0953, lr: 0.000100
+Losses
+0.132718605265881
+0.0055099391345477975
+0.09206251320429146
+0.03514615293544454
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 19:06:15,345 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 19:18:42,866 Graphormer INFO: eta: 592 days, 17:13:56 epoch: 0 iter: 7900 max mem : 0  loss: 0.1322, 2d joint loss: 0.0917, 3d joint loss: 0.0055, vertex loss: 0.0351, compute: 7.8736, data: 0.0952, lr: 0.000100
+Losses
+0.13223553039557948
+0.005487922728061676
+0.09168854823571783
+0.035059059434629315
+INFO:Graphormer:eta: 592 days, 17:13:56 epoch: 0 iter: 7900 max mem : 0  loss: 0.1322, 2d joint loss: 0.0917, 3d joint loss: 0.0055, vertex loss: 0.0351, compute: 7.8736, data: 0.0952, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 19:18:47,620 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 19:31:12,265 Graphormer INFO: eta: 592 days, 8:26:24 epoch: 0 iter: 8000 max mem : 0  loss: 0.1317, 2d joint loss: 0.0913, 3d joint loss: 0.0055, vertex loss: 0.0350, compute: 7.8689, data: 0.0951, lr: 0.000100
+Losses
+0.131722827648744
+0.005462713042390533
+0.09129139667493291
+0.03496871793502942
+INFO:Graphormer:eta: 592 days, 8:26:24 epoch: 0 iter: 8000 max mem : 0  loss: 0.1317, 2d joint loss: 0.0913, 3d joint loss: 0.0055, vertex loss: 0.0350, compute: 7.8689, data: 0.0951, lr: 0.000100
+2023-05-24 19:31:17,043 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 19:43:42,689 Graphormer INFO: eta: 592 days, 0:05:18 epoch: 0 iter: 8100 max mem : 0  loss: 0.1312, 2d joint loss: 0.0909, 3d joint loss: 0.0054, vertex loss: 0.0349, compute: 7.8644, data: 0.0949, lr: 0.000100
+Losses
+0.13121597800127885
+0.005441778436616454
+0.09089673242244271
+0.034877467143958736
+INFO:Graphormer:eta: 592 days, 0:05:18 epoch: 0 iter: 8100 max mem : 0  loss: 0.1312, 2d joint loss: 0.0909, 3d joint loss: 0.0054, vertex loss: 0.0349, compute: 7.8644, data: 0.0949, lr: 0.000100
+2023-05-24 19:43:47,656 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 19:56:11,636 Graphormer INFO: eta: 591 days, 15:36:36 epoch: 0 iter: 8200 max mem : 0  loss: 0.1308, 2d joint loss: 0.0906, 3d joint loss: 0.0054, vertex loss: 0.0348, compute: 7.8598, data: 0.0948, lr: 0.000100
+Losses
+0.13078570520051006
+0.005423000977266716
+0.09056244238370621
+0.03480026183945195
+INFO:Graphormer:eta: 591 days, 15:36:36 epoch: 0 iter: 8200 max mem : 0  loss: 0.1308, 2d joint loss: 0.0906, 3d joint loss: 0.0054, vertex loss: 0.0348, compute: 7.8598, data: 0.0948, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 19:56:16,415 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+2023-05-24 20:08:39,051 Graphormer INFO: eta: 591 days, 6:59:51 epoch: 0 iter: 8300 max mem : 0  loss: 0.1304, 2d joint loss: 0.0903, 3d joint loss: 0.0054, vertex loss: 0.0347, compute: 7.8552, data: 0.0947, lr: 0.000100
+Losses
+0.1304007766911962
+0.005404572890740427
+0.09026964607816863
+0.034726557717265856
+INFO:Graphormer:eta: 591 days, 6:59:51 epoch: 0 iter: 8300 max mem : 0  loss: 0.1304, 2d joint loss: 0.0903, 3d joint loss: 0.0054, vertex loss: 0.0347, compute: 7.8552, data: 0.0947, lr: 0.000100
+2023-05-24 20:08:43,933 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 20:21:17,002 Graphormer INFO: eta: 591 days, 0:51:03 epoch: 0 iter: 8400 max mem : 0  loss: 0.1299, 2d joint loss: 0.0899, 3d joint loss: 0.0054, vertex loss: 0.0346, compute: 7.8519, data: 0.0946, lr: 0.000100
+Losses
+0.1299436436917278
+0.005384030913964602
+0.08991736394863221
+0.03464224882379529
+INFO:Graphormer:eta: 591 days, 0:51:03 epoch: 0 iter: 8400 max mem : 0  loss: 0.1299, 2d joint loss: 0.0899, 3d joint loss: 0.0054, vertex loss: 0.0346, compute: 7.8519, data: 0.0946, lr: 0.000100
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0
+2023-05-24 20:21:21,808 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:eta: 599 days, 5:07:28 epoch: 0 iter: 8500 max mem : 0  loss: 0.1295, 2d joint loss: 0.0896, 3d joint loss: 0.0054, vertex loss: 0.0346, compute: 7.9606, data: 0.0944, lr: 0.000100
+2023-05-24 20:49:46,716 Graphormer INFO: eta: 599 days, 5:07:28 epoch: 0 iter: 8500 max mem : 0  loss: 0.1295, 2d joint loss: 0.0896, 3d joint loss: 0.0054, vertex loss: 0.0346, compute: 7.9606, data: 0.0944, lr: 0.000100
+Losses
+0.1295104877142345
+0.0053647862619528655
+0.08958281924685135
+0.03456288220273221
+2023-05-24 20:49:56,549 Graphormer INFO: Save checkpoint to output/checkpoint-0-0
+INFO:Graphormer:Save checkpoint to output/checkpoint-0-0

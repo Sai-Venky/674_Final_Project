@@ -13,23 +13,56 @@ from torchvision.utils import make_grid
 import gc
 import numpy as np
 import cv2
-from models import BertConfig, Graphormer
-from models import Graphormer_Hand_Network as Graphormer_Network
-from models.mano import MANO, Mesh
-from models.hrnet.hrnet_cls_net_gridfeat import get_cls_net_gridfeat
-from models.hrnet.config import config as hrnet_config
-from models.hrnet.config import update_config as hrnet_update_config
-import utils.config as cfg
-from utils.build import make_hand_data_loader
+from src2.models import BertConfig, Graphormer
+from src2.models import Graphormer_Hand_Network as Graphormer_Network
+from src2.models.mano import MANO, Mesh
+from src2.models.hrnet.hrnet_cls_net_gridfeat import get_cls_net_gridfeat
+from src2.models.hrnet.config import config as hrnet_config
+from src2.models.hrnet.config import update_config as hrnet_update_config
+import src2.utils.config as cfg
+from src2.utils.build import make_hand_data_loader
 
-from utils.logger import setup_logger
-from utils.comm import synchronize, is_main_process, get_rank, get_world_size, all_gather
-from utils.miscellaneous import mkdir, set_seed
-from utils.metric_logger import AverageMeter
-from utils.geometric_layers import orthographic_projection
+from src2.utils.logger import setup_logger
+from src2.utils.comm import synchronize, is_main_process, get_rank, get_world_size, all_gather
+from src2.utils.miscellaneous import mkdir, set_seed
+from src2.utils.metric_logger import AverageMeter
+from src2.utils.geometric_layers import orthographic_projection
 
 # from azureml.core.run import Run
 # aml_run = Run.get_context()
+
+from src2.utils.renderer import Renderer, visualize_reconstruction, visualize_reconstruction_test, visualize_reconstruction_no_text
+
+# from azureml.core.run import Run
+# aml_run = Run.get_context()
+def visualize_mesh( renderer,
+                    images,
+                    gt_keypoints_2d,
+                    pred_vertices,
+                    pred_camera,
+                    pred_keypoints_2d,
+                    trainMode = True):
+    """Tensorboard logging."""
+    gt_keypoints_2d = gt_keypoints_2d.cpu().numpy()
+    to_lsp = list(range(21))
+    rend_imgs = []
+    batch_size = pred_vertices.shape[0]
+    # Do visualization for the first 6 images of the batch
+    for i in range(min(batch_size, 10)):
+        img = images[i].cpu().numpy().transpose(1,2,0)
+        # Get LSP keypoints from the full list of keypoints
+        gt_keypoints_2d_ = gt_keypoints_2d[i, to_lsp]
+        pred_keypoints_2d_ = pred_keypoints_2d.cpu().numpy()[i, to_lsp]
+        # Get predict vertices for the particular example
+        vertices = pred_vertices[i].cpu().numpy()
+        cam = pred_camera[i].cpu().numpy()
+        # Visualize reconstruction and detected pose
+        rend_img = visualize_reconstruction(img, 224, gt_keypoints_2d_, vertices, pred_keypoints_2d_, cam, renderer, trainMode)
+        rend_img = rend_img.transpose(2,0,1)
+        rend_imgs.append(torch.from_numpy(rend_img))
+    rend_imgs = make_grid(rend_imgs, nrow=1)
+    return rend_imgs
+
 
 def save_checkpoint(model, args, epoch, iteration, num_trial=10):
     checkpoint_dir = op.join(args.output_dir, 'checkpoint-{}-{}'.format(
@@ -99,9 +132,10 @@ def vertices_loss(criterion_vertices, pred_vertices, gt_vertices, has_smpl):
         return torch.FloatTensor(1).fill_(0.)#.cuda()
     
 
-def run(args, train_dataloader, Graphormer_model, mano_model, renderer, mesh_sampler):
+def run(args, train_dataloader, Graphormer_model, mano_model, renderer, mesh_sampler, criterion_2d_keypoints, criterion_keypoints, criterion_vertices ):
 
-    max_iter = len(train_dataloader)
+    max_iter = len(train_dataloader)*0.1
+    # train_dataloader = train_dataloader[ : int(max_iter*0.2)]
     iters_per_epoch = max_iter // args.num_train_epochs
 
     optimizer = torch.optim.Adam(params=list(Graphormer_model.parameters()),
@@ -110,9 +144,9 @@ def run(args, train_dataloader, Graphormer_model, mano_model, renderer, mesh_sam
                                            weight_decay=0)
 
     # define loss function (criterion) and optimizer
-    criterion_2d_keypoints = torch.nn.MSELoss(reduction='none')#.cuda(args.device)
-    criterion_keypoints = torch.nn.MSELoss(reduction='none')#.cuda(args.device)
-    criterion_vertices = torch.nn.L1Loss()#.cuda(args.device)
+    # criterion_2d_keypoints = torch.nn.HuberLoss(reduction='mean', delta=1.0) #   # torch.nn.MSELoss(reduction='none')#.cuda(args.device)
+    # criterion_keypoints = torch.nn.HuberLoss(reduction='mean', delta=1.0) # torch.nn.MSELoss(reduction='none')#.cuda(args.device) #
+    # criterion_vertices = torch.nn.L1Loss()#.cuda(args.device)
 
     if args.distributed:
         Graphormer_model = torch.nn.parallel.DistributedDataParallel(
@@ -131,7 +165,7 @@ def run(args, train_dataloader, Graphormer_model, mano_model, renderer, mesh_sam
     log_loss_3djoints = AverageMeter()
     log_loss_vertices = AverageMeter()
 
-    for iteration, (img_keys, images, annotations) in enumerate(train_dataloader):
+    for iteration, (img_keys, images, annotations) in enumerate(train_dataloader) :  # int(max_iter*0.2)
 
         Graphormer_model.train()
         iteration += 1
@@ -212,7 +246,7 @@ def run(args, train_dataloader, Graphormer_model, mano_model, renderer, mesh_sam
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if iteration % args.logging_steps == 0 or iteration == max_iter:
+        if iteration % args.logging_steps == 0 or iteration == max_iter: # iteration%10 == 1 : #
             eta_seconds = batch_time.avg * (max_iter - iteration)
             eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
             logger.info(
@@ -231,37 +265,38 @@ def run(args, train_dataloader, Graphormer_model, mano_model, renderer, mesh_sam
             print(float(log_loss_2djoints.avg))
             print(float(log_loss_vertices.avg))
 
-            # visual_imgs = visualize_mesh(   renderer,
-            #                                 annotations['ori_img'].detach(),
-            #                                 annotations['joints_2d'].detach(),
-            #                                 pred_vertices.detach(), 
-            #                                 pred_camera.detach(),
-            #                                 pred_2d_joints_from_mesh.detach())
-            # visual_imgs = visual_imgs.transpose(0,1)
-            # visual_imgs = visual_imgs.transpose(1,2)
-            # visual_imgs = np.asarray(visual_imgs)
+            visual_imgs = visualize_mesh(   renderer,
+                                            annotations['ori_img'].detach(),
+                                            annotations['joints_2d'].detach(),
+                                            pred_vertices.detach(),
+                                            pred_camera.detach(),
+                                            pred_2d_joints_from_mesh.detach())
+            visual_imgs = visual_imgs.transpose(0,1)
+            visual_imgs = visual_imgs.transpose(1,2)
+            visual_imgs = np.asarray(visual_imgs)
 
-            # if is_main_process()==True:
-            #     stamp = str(epoch) + '_' + str(iteration)
-            #     temp_fname = args.output_dir + 'visual_' + stamp + '.jpg'
-            #     cv2.imwrite(temp_fname, np.asarray(visual_imgs[:,:,::-1]*255))
-            #     aml_run.log_image(name='visual results', path=temp_fname)
+            if True: #is_main_process()==True:
+                stamp = str(epoch) + '_' + str(iteration)
+                temp_fname = args.output_dir + 'visual_' + stamp + '.jpg'
+                cv2.imwrite(temp_fname, np.asarray(visual_imgs[:,:,::-1]*255))
+                # aml_run.log_image(name='visual results', path=temp_fname)
+
+                checkpoint_dir = save_checkpoint(Graphormer_model, args, epoch, 2) # 0 for pruned complete dataset 2 first 10000 with huber
 
         if iteration % iters_per_epoch == 0:
             if epoch%10==0:
-                checkpoint_dir = save_checkpoint(Graphormer_model, args, epoch, iteration)
+                checkpoint_dir = save_checkpoint(Graphormer_model, args, epoch, 2)
 
     total_training_time = time.time() - start_training_time
     total_time_str = str(datetime.timedelta(seconds=total_training_time))
     logger.info('Total training time: {} ({:.4f} s / iter)'.format(
         total_time_str, total_training_time / max_iter)
     )
-    checkpoint_dir = save_checkpoint(Graphormer_model, args, epoch, iteration)
+    checkpoint_dir = save_checkpoint(Graphormer_model, args, epoch, 1000+iteration)
 
-def run_eval_and_save(args, split, val_dataloader, Graphormer_model, mano_model, renderer, mesh_sampler):
+def run_eval_and_save(args, split, val_dataloader, Graphormer_model, mano_model, renderer, mesh_sampler,criterion_2d_keypoints, criterion_keypoints, criterion_vertices ):
 
-    criterion_keypoints = torch.nn.MSELoss(reduction='none').cuda(args.device)
-    criterion_vertices = torch.nn.L1Loss().cuda(args.device)
+
 
     if args.distributed:
         Graphormer_model = torch.nn.parallel.DistributedDataParallel(
@@ -276,11 +311,11 @@ def run_eval_and_save(args, split, val_dataloader, Graphormer_model, mano_model,
                                 criterion_keypoints, 
                                 criterion_vertices, 
                                 0, 
-                                mano_model, mesh_sampler)
-    checkpoint_dir = save_checkpoint(Graphormer_model, args, 0, 0)
+                                mano_model, mesh_sampler, saveOutputImage=True, renderer=renderer)
+    # checkpoint_dir = save_checkpoint(Graphormer_model, args, 0, 1000)
     return
 
-def run_inference_hand_mesh(args, val_loader, Graphormer_model, criterion, criterion_vertices, epoch, mano_model, mesh_sampler):
+def run_inference_hand_mesh(args, val_loader, Graphormer_model, criterion, criterion_vertices, epoch, mano_model, mesh_sampler, saveOutputImage = False, renderer = None):
     # switch to evaluate mode
     Graphormer_model.eval()
     fname_output_save = []
@@ -310,6 +345,25 @@ def run_inference_hand_mesh(args, val_loader, Graphormer_model, criterion, crite
                 pred_3d_joints_from_mesh_list = pred_3d_joints_from_mesh[j].tolist()
                 joint_output_save.append(pred_3d_joints_from_mesh_list)
 
+            if(saveOutputImage) :
+                visual_imgs = visualize_mesh(renderer,
+                                             annotations['ori_img'].detach(),
+                                             annotations['joints_2d'].detach(),
+                                             pred_vertices.detach(),
+                                             pred_camera.detach(),
+                                             pred_3d_joints_from_mesh.detach(), trainMode = False)
+                visual_imgs = visual_imgs.transpose(0, 1)
+                visual_imgs = visual_imgs.transpose(1, 2)
+                visual_imgs = np.asarray(visual_imgs)
+
+
+                stamp = str(epoch) + '_' + str(i)
+                # st = f"{args.output_dir}visual_output_eval_{stamp}.jpg"
+                temp_fname = args.output_dir + 'visual_output_eval_' + stamp + '.jpg'
+                cv2.imwrite(temp_fname, np.asarray(visual_imgs[:, :, ::-1] * 255))
+
+
+
     print('save results to pred.json')
     with open('pred.json', 'w') as f:
         json.dump([joint_output_save, mesh_output_save], f)
@@ -332,9 +386,9 @@ def parse_args():
     #########################################################
     parser.add_argument("--data_dir", default='datasets', type=str, required=False,
                         help="Directory with all datasets, each in one subfolder")
-    parser.add_argument("--train_yaml", default='imagenet2012/train.yaml', type=str, required=False,
+    parser.add_argument("--train_yaml", default='./datasets/freihand/train.yaml', type=str, required=False,
                         help="Yaml file with all data for training.")
-    parser.add_argument("--val_yaml", default='freihand_v3/test.yaml', type=str, required=False,
+    parser.add_argument("--val_yaml", default='./datasets/freihand/test.yaml', type=str, required=False,
                         help="Yaml file with all data for validation.")
     parser.add_argument("--num_workers", default=0, type=int, 
                         help="Workers in dataloader.")       
@@ -343,9 +397,9 @@ def parse_args():
     #########################################################
     # Loading/saving checkpoints
     #########################################################
-    parser.add_argument("--model_name_or_path", default='src/models/bert-base-uncased/', type=str, required=False,
+    parser.add_argument("--model_name_or_path", default='src2/models/bert-base-uncased/', type=str, required=False,
                         help="Path to pre-trained transformer model or model type.")
-    parser.add_argument("--resume_checkpoint", default=None, type=str, required=False,
+    parser.add_argument("--resume_checkpoint", default='output/checkpoint-1.0-2', type=str, required=False,
                         help="Path to specific checkpoint for resume training.")
     parser.add_argument("--output_dir", default='output/', type=str, required=False,
                         help="The output directory to save checkpoint and test results.")
@@ -356,9 +410,13 @@ def parse_args():
     #########################################################
     # Training parameters
     #########################################################
-    parser.add_argument("--per_gpu_train_batch_size", default=64, type=int, 
+    parser.add_argument("--tr_fraction", default=0.2, type=int,
+                        help="Size of training data rest will be ignored.")
+    parser.add_argument("--te_fraction", default=1, type=int,
+                        help="Size of test data rest will be ignored.")
+    parser.add_argument("--per_gpu_train_batch_size", default=4, type=int,
                         help="Batch size per GPU/CPU for training.")
-    parser.add_argument("--per_gpu_eval_batch_size", default=32, type=int, 
+    parser.add_argument("--per_gpu_eval_batch_size", default=4, type=int,
                         help="Batch size per GPU/CPU for evaluation.")
     parser.add_argument('--lr', "--learning_rate", default=1e-4, type=float, 
                         help="The initial lr.")
@@ -366,6 +424,14 @@ def parse_args():
                         help="Total number of training epochs to perform.")
     parser.add_argument("--vertices_loss_weight", default=1.0, type=float)          
     parser.add_argument("--joints_loss_weight", default=1.0, type=float)
+    # get loss functions
+    parser.add_argument("--criterion_2d_keypoints", default='Huber', type=str,
+                        help="Size of training data rest will be ignored.")
+    parser.add_argument("--criterion_keypoints", default='Huber', type=str,
+                        help="Size of test data rest will be ignored.")
+    parser.add_argument("--criterion_vertices", default='MSE', type=str,
+                        help="Batch size per GPU/CPU for training.")
+
     parser.add_argument("--vloss_w_full", default=0.5, type=float) 
     parser.add_argument("--vloss_w_sub", default=0.5, type=float)  
     parser.add_argument("--drop_out", default=0.1, type=float, 
@@ -393,7 +459,7 @@ def parse_args():
     #########################################################
     # Others
     #########################################################
-    parser.add_argument("--run_eval_only", default=True, action='store_true',) 
+    parser.add_argument("--run_eval_only", default=True, action='store_true',)
     parser.add_argument("--multiscale_inference", default=False, action='store_true',) 
     # if enable "multiscale_inference", dataloader will apply transformations to the test image based on
     # the rotation "rot" and scale "sc" parameters below 
@@ -440,7 +506,7 @@ def main(args):
     mesh_sampler = Mesh()
 
     # Renderer for visualization
-    renderer = None
+    renderer = Renderer(faces=mano_model.face)
 
     # Load pretrained model
     trans_encoder = []
@@ -452,10 +518,28 @@ def main(args):
     # which encoder block to have graph convs
     which_blk_graph = [int(item) for item in args.which_gcn.split(',')]
 
+    # define the loss functions!!
+
+    criterion_2d_keypoints = torch.nn.MSELoss(reduction='none')#.cuda(args.device)
+    criterion_keypoints = torch.nn.MSELoss(reduction='none')#.cuda(args.device) #
+    criterion_vertices = torch.nn.L1Loss()  # .cuda(args.device)
+
+    if args.criterion_2d_keypoints =='Huber':
+        # criterion_keypoints = torch.nn.MSELoss(reduction='none').cuda(args.device)
+        # criterion_vertices = torch.nn.L1Loss().cuda(args.device)
+        criterion_2d_keypoints = torch.nn.HuberLoss(reduction='mean',
+                                                  delta=1.0)  # # torch.nn.MSELoss(reduction='none')#.cuda(args.device)
+    if args.criterion_keypoints == 'Huber':
+        criterion_keypoints = torch.nn.HuberLoss(reduction='mean',
+                                                 delta=1.0)  # torch.nn.MSELoss(reduction='none')#.cuda(args.device) #
+    if args.criterion_vertices == 'Huber':
+        criterion_vertices = torch.nn.HuberLoss(reduction='mean',
+                                                 delta=1.0) #torch.nn.L1Loss()  # .cuda(args.device)
+
     if args.run_eval_only==True and args.resume_checkpoint!=None and args.resume_checkpoint!='None' and 'state_dict' not in args.resume_checkpoint:
         # if only run eval, load checkpoint
         logger.info("Evaluation: Loading from checkpoint {}".format(args.resume_checkpoint))
-        _model = torch.load(args.resume_checkpoint)
+        _model = torch.load(args.resume_checkpoint+"/model.bin")
 
     else:
         # init three transformer-encoder blocks in a loop
@@ -513,7 +597,7 @@ def main(args):
             # for fine-tuning or resume training or inference, load weights from checkpoint
             logger.info("Loading state dict from checkpoint {}".format(args.resume_checkpoint))
             # workaround approach to load sparse tensor in graph conv.
-            state_dict = torch.load(args.resume_checkpoint)
+            state_dict = torch.load(args.resume_checkpoint + "/state_dict.bin")
             _model.load_state_dict(state_dict, strict=False)
             del state_dict
             gc.collect()
@@ -524,13 +608,12 @@ def main(args):
 
     if args.run_eval_only==True:
         val_dataloader = make_hand_data_loader(args, args.val_yaml, 
-                                        args.distributed, is_train=False, scale_factor=args.img_scale_factor)
-        run_eval_and_save(args, 'freihand', val_dataloader, _model, mano_model, renderer, mesh_sampler)
+                                        args.distributed, is_train=False, scale_factor=args.img_scale_factor, tr_fraction= args.te_fraction)
+        run_eval_and_save(args, 'freihand', val_dataloader, _model, mano_model, renderer, mesh_sampler, criterion_2d_keypoints, criterion_keypoints, criterion_vertices )
 
     else:
-        train_dataloader = make_hand_data_loader(args, args.train_yaml, 
-                                            args.distributed, is_train=True, scale_factor=args.img_scale_factor)
-        run(args, train_dataloader, _model, mano_model, renderer, mesh_sampler)
+        train_dataloader = make_hand_data_loader(args, args.train_yaml, args.distributed, is_train=True, scale_factor=args.img_scale_factor, tr_fraction= args.tr_fraction)
+        run(args, train_dataloader, _model, mano_model, renderer, mesh_sampler, criterion_2d_keypoints, criterion_keypoints, criterion_vertices )
 
 if __name__ == "__main__":
     args = parse_args()

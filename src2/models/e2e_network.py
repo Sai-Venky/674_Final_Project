@@ -5,7 +5,7 @@ Licensed under the MIT license.
 """
 
 import torch
-import utils.config as cfg
+import src2.utils.config as cfg
 
 
 def construct_template(mesh_model, mesh_sampler):

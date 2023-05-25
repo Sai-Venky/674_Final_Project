@@ -28,7 +28,7 @@ import torch
 from torch import nn
 from torch.nn import CrossEntropyLoss, MSELoss
 
-from utils.bert_utils import (WEIGHTS_NAME, CONFIG_NAME, PretrainedConfig, PreTrainedModel,
+from src2.utils.bert_utils import (WEIGHTS_NAME, CONFIG_NAME, PretrainedConfig, PreTrainedModel,
                              prune_linear_layer, add_start_docstrings)
 
 logger = logging.getLogger(__name__)

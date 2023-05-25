@@ -8,8 +8,8 @@ Licensed under the MIT license.
 import os.path as op
 import torch
 import logging
-from utils.comm import get_world_size
-from utils.hand_mesh_tsv import  (HandMeshTSVYamlDataset)
+from src2.utils.comm import get_world_size
+from src2.utils.hand_mesh_tsv import  (HandMeshTSVYamlDataset)
 
 
 class IterationBasedBatchSampler(torch.utils.data.sampler.BatchSampler):
@@ -72,8 +72,7 @@ def build_hand_dataset(yaml_file, args, is_train=True, scale_factor=1):
     return HandMeshTSVYamlDataset(args, yaml_file, is_train, False, scale_factor)
 
 
-def make_hand_data_loader(args, yaml_file, is_distributed=True, 
-        is_train=True, start_iter=0, scale_factor=1):
+def make_hand_data_loader(args, yaml_file, is_distributed=True, is_train=True, start_iter=0, scale_factor=1, tr_fraction = 1):
 
     dataset = build_hand_dataset(yaml_file, args, is_train=is_train, scale_factor=scale_factor)
     logger = logging.getLogger(__name__)
@@ -100,5 +99,7 @@ def make_hand_data_loader(args, yaml_file, is_distributed=True,
         dataset, num_workers=args.num_workers, batch_sampler=batch_sampler,
         pin_memory=True,
     )
+    # max_iter = len(data_loader)
+    # data_loader = data_loader[: int(max_iter * tr_fraction)]
     return data_loader
 
